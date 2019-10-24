@@ -46,6 +46,7 @@ import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.impl.*;
 import com.schibsted.spt.data.jslt.filters.JsonFilter;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ParserImpl {
 
@@ -110,6 +111,27 @@ public class ParserImpl {
 
   private static ExpressionNode node2expr(ParseContext ctx, SimpleNode node) {
     if (node.id != JsltParserTreeConstants.JJTEXPR)
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
+
+    return node2letexpr(ctx, getChild(node, 0));
+  }
+
+  private static ExpressionNode node2letexpr(ParseContext ctx, SimpleNode node) {
+    if (node.id != JsltParserTreeConstants.JJTLETEXPR)
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
+
+    if (node.jjtGetNumChildren() == 1) // it's just the base
+      return node2orexpr(ctx, getChild(node, 0));;
+
+    String ident = node.jjtGetFirstToken().next.image;
+    ExpressionNode value = node2expr(ctx, getChild(node, 0));
+    ExpressionNode body = node2expr(ctx, getChild(node, 1));
+
+    return new ValExpression(ident, value, body, makeLocation(ctx, node));
+  }
+
+  private static ExpressionNode node2orexpr(ParseContext ctx, SimpleNode node) {
+    if (node.id != JsltParserTreeConstants.JJTOREXPR)
       throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2andexpr(ctx, getChild(node, 0));

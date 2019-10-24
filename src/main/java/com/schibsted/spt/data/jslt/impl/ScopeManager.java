@@ -110,6 +110,11 @@ public class ScopeManager {
     current.pop();
   }
 
+  public VariableInfo registerVariable(VariableInfo info) {
+    current.peek().registerVariable(info);
+    return info;
+  }
+
   /**
    * Registers a variable.
    */

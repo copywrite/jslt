@@ -1,0 +1,9 @@
+
+def main()
+    let age = .age
+    2 + $age
+
+def main2()
+    2 + (val age = . age into $age)
+
+main2()

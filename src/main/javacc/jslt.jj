@@ -52,6 +52,8 @@ TOKEN :
   < LPAREN: "(" > |
   < RPAREN: ")" > |
   < LET: "let" > |
+  < VAL: "val" > |
+  < INTO: "into" > |
   < ASSIGN: "=" > |
   < EQUALS: "==" > |
   < UNEQUALS: "!=" > |
@@ -101,7 +103,20 @@ void Module() :
   (Expr())? <EOF>
 }
 
-void Expr() :
+void Expr():
+{}
+{
+    LetExpr()
+}
+
+void LetExpr():
+{}
+{
+    ("val" <IDENT> "=" Expr())+ "into" Expr()
+    | OrExpr()
+}
+
+void OrExpr()  :
 {}
 {
   AndExpr() (<OR> Expr())?
