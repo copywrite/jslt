@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import com.schibsted.spt.data.jslt.filters.JsonFilter;
 import com.schibsted.spt.data.jslt.json.JsonNull;
+import com.schibsted.spt.data.jslt.json.JsonObject;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class ObjectExpression extends AbstractNode {
@@ -56,7 +57,7 @@ public class ObjectExpression extends AbstractNode {
   public JsonValue apply(Scope scope, JsonValue input) {
     NodeUtils.evalLets(scope, input, lets);
 
-    ObjectNode object = NodeUtils.mapper.createObjectNode();
+    JsonObject object = NodeUtils.mapper.createObjectNode();
     for (int ix = 0; ix < children.length; ix++) {
       JsonValue value = children[ix].apply(scope, input);
       if (filter.filter(value))
@@ -69,7 +70,7 @@ public class ObjectExpression extends AbstractNode {
     return object;
   }
 
-  private void evaluateMatcher(Scope scope, JsonValue input, ObjectNode object) {
+  private void evaluateMatcher(Scope scope, JsonValue input, JsonObject object) {
     // find the object to match against
     JsonValue context = contextQuery.apply(scope, input);
     if (context.isNull() && !context.isObject())

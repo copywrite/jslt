@@ -16,6 +16,7 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonString;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class MultiplyOperator extends NumericOperator {
@@ -26,16 +27,16 @@ public class MultiplyOperator extends NumericOperator {
   }
 
   public JsonValue perform(JsonValue v1, JsonValue v2) {
-    if (v1.isTextual() || v2.isTextual()) {
+    if (v1.isString() || v2.isString()) {
       // if one operand is string: do string multiplication
 
       String str;
       int num;
-      if (v1.isTextual() && !v2.isTextual()) {
-        str = v1.asText();
+      if (v1.isString() && !v2.isString()) {
+        str = v1.stringValue();
         num = v2.intValue();
-      } else if (v2.isTextual()) {
-        str = v2.asText();
+      } else if (v2.isString()) {
+        str = v2.stringValue();
         num = v1.intValue();
       } else
         throw new JsltException("Can't multiply two strings!");
@@ -44,7 +45,7 @@ public class MultiplyOperator extends NumericOperator {
       for ( ; num > 0; num--)
         buf.append(str);
 
-      return new TextNode(buf.toString());
+      return new JsonString(buf.toString());
     } else
       // do numeric operation
       return super.perform(v1, v2);

@@ -15,6 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import com.schibsted.spt.data.jslt.json.JsonDouble;
+import com.schibsted.spt.data.jslt.json.JsonLong;
 import com.schibsted.spt.data.jslt.json.JsonNull;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
@@ -33,9 +35,9 @@ public abstract class NumericOperator extends AbstractOperator {
     v2 = NodeUtils.number(v2, true, location);
 
     if (v1.isIntegralNumber() && v2.isIntegralNumber())
-      return new LongNode(perform(v1.longValue(), v2.longValue()));
+      return new JsonLong(perform(v1.longValue(), v2.longValue()));
     else
-      return new DoubleNode(perform(v1.doubleValue(), v2.doubleValue()));
+      return new JsonDouble(perform(v1.doubleValue(), v2.doubleValue()));
   }
 
   protected abstract double perform(double v1, double v2);

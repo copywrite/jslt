@@ -15,7 +15,8 @@
 
 package com.schibsted.spt.data.jslt.filters;
 
-import com.fasterxml.jackson.databind.JsonNode;
+
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 /**
  * A filter that can approve/disapprove a JSON value. Used to
@@ -26,6 +27,6 @@ public interface JsonFilter {
   /**
    * Whether or not to accept this value.
    */
-  public boolean filter(JsonNode value);
+  public boolean filter(JsonValue value);
 
 }

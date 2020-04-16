@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schibsted.spt.data.jslt.Parser;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.impl.ExpressionImpl;
+import com.schibsted.spt.data.jslt.json.JsonValue;
+import com.schibsted.spt.data.jslt.json.jackson.JacksonConverter;
 
 public class JSLT {
 
@@ -38,7 +40,11 @@ public class JSLT {
 
     JsonNode input = mapper.readTree(new File(args[1]));
 
-    JsonNode output = expr.apply(input);
+    JsonValue inputValue = JacksonConverter.fromJackson(input);
+
+    JsonValue outputValue = expr.apply(inputValue);
+
+    JsonNode output = JacksonConverter.toJackson(outputValue);
 
     if (output == null)
       System.out.println("WARN: returned Java null!");

@@ -15,18 +15,18 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jslt.JsltException;
+
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class SmallerOrEqualsComparison extends ComparisonOperator {
 
-  public SmallerOrEqualsComparison(ExpressionNode left, ExpressionNode right,
-                                 Location location) {
-    super(left, right, ">=", location);
-  }
+    public SmallerOrEqualsComparison(ExpressionNode left, ExpressionNode right,
+                                     Location location) {
+        super(left, right, ">=", location);
+    }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
-    return NodeUtils.toJson(compare(v1, v2) <= 0);
-  }
+    public JsonValue perform(JsonValue v1, JsonValue v2) {
+        return NodeUtils.toJson(compare(v1, v2) <= 0);
+    }
 
 }

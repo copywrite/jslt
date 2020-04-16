@@ -16,15 +16,19 @@
 package com.schibsted.spt.data.jslt.impl.lambda;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schibsted.spt.data.jslt.Parser;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.impl.NodeUtils;
+import com.schibsted.spt.data.jslt.json.jackson.JacksonConverter;
 
 /**
   * A lambda function used to create the online demo playground via
   * API gateway.
   */
 public class LambdaFunction {
+
+  private ObjectMapper mapper = new ObjectMapper();
 
   /**
    * Transform the incoming JSON with JSLT and return the result.
@@ -33,15 +37,15 @@ public class LambdaFunction {
     try {
       // this must be:
       // {"json" : ..., "jslt" : jslt}
-      JsonNode input = NodeUtils.mapper.readTree(json);
+      JsonNode input = mapper.readTree(json);
 
       // now we can do the thing
-      JsonNode source = NodeUtils.mapper.readTree(input.get("json").asText());
+      JsonNode source = mapper.readTree(input.get("json").asText());
       String jslt = input.get("jstl").asText();
 
       Expression template = Parser.compileString(jslt);
-      JsonNode output = template.apply(source);
-      return NodeUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(output);
+      JsonNode output = JacksonConverter.toJackson(template.apply(JacksonConverter.fromJackson(source)));
+      return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(output);
     } catch (Throwable e) {
       return "ERROR: " + e;
     }

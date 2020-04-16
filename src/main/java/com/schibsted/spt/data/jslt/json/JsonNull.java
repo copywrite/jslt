@@ -8,7 +8,11 @@ package com.schibsted.spt.data.jslt.json;
  */
 public class JsonNull extends JsonValue {
 
+    // TODO: Rename to NULL
     public static final JsonNull instance = new JsonNull();
 
     private JsonNull() {}
+
+    @Override
+    public boolean isNull() { return true; }
 }

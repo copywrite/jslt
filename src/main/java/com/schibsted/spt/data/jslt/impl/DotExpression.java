@@ -15,6 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import com.schibsted.spt.data.jslt.json.JsonNull;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class DotExpression extends AbstractNode {
     // okay, do the keying
     JsonValue value = input.get(key);
     if (value == null)
-      value = NullNode.instance;
+      value = JsonNull.instance;
     return value;
   }
 

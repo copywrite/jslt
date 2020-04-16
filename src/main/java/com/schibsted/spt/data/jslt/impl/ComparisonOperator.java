@@ -33,9 +33,9 @@ public abstract class ComparisonOperator extends AbstractOperator {
       double n2 = NodeUtils.number(v2, location).doubleValue();
       return n1 - n2;
 
-    } else if (v1.isTextual() && v2.isTextual()) {
-      String s1 = v1.asText();
-      String s2 = v2.asText();
+    } else if (v1.isString() && v2.isString()) {
+      String s1 = v1.stringValue();
+      String s2 = v2.stringValue();
       return (double) s1.compareTo(s2);
 
     } else if (v1.isNull() || v2.isNull()) {

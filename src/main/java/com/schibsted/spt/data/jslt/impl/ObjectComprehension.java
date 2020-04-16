@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.filters.JsonFilter;
+import com.schibsted.spt.data.jslt.json.JsonObject;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class ObjectComprehension extends AbstractNode {
@@ -55,7 +56,7 @@ public class ObjectComprehension extends AbstractNode {
     else if (!sequence.isArray())
       throw new JsltException("Object comprehension can't loop over " + sequence, location);
 
-    ObjectNode object = NodeUtils.mapper.createObjectNode();
+    JsonObject object = new JsonObject();
     for (int ix = 0; ix < sequence.size(); ix++) {
       JsonValue context = sequence.get(ix);
 
@@ -68,9 +69,9 @@ public class ObjectComprehension extends AbstractNode {
         if (filter.filter(valueNode)) {
           // if there is no value, no need to evaluate the key
           JsonValue keyNode = key.apply(scope, context);
-          if (!keyNode.isTextual())
+          if (!keyNode.isString())
             throw new JsltException("Object comprehension must have string as key, not " + keyNode, location);
-          object.set(keyNode.asText(), valueNode);
+          object.put(keyNode.stringValue(), valueNode);
         }
       }
     }

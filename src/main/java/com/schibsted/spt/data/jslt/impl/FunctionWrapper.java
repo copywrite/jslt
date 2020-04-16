@@ -22,8 +22,7 @@ import java.util.HashMap;
 
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
-import com.schibsted.spt.data.jslt.json.JsonNull;
-import com.schibsted.spt.data.jslt.json.JsonValue;
+import com.schibsted.spt.data.jslt.json.*;
 
 public class FunctionWrapper implements Function {
   private String name;
@@ -96,8 +95,8 @@ public class FunctionWrapper implements Function {
     public Object convert(JsonValue node) {
       if (node.isNull())
         return null;
-      else if (node.isTextual())
-        return node.asText();
+      else if (node.isString())
+        return node.stringValue();
       else
         throw new JsltException("Could not convert " + node + " to string");
     }
@@ -108,7 +107,7 @@ public class FunctionWrapper implements Function {
       if (!node.isNumber())
         throw new JsltException("Cannot convert " + node + " to long");
       else
-        return node.asLong();
+        return node.longValue();
     }
   }
 
@@ -117,7 +116,7 @@ public class FunctionWrapper implements Function {
       if (!node.isNumber())
         throw new JsltException("Cannot convert " + node + " to int");
       else
-        return node.asInt();
+        return node.intValue();
     }
   }
 
@@ -126,7 +125,7 @@ public class FunctionWrapper implements Function {
       if (!node.isBoolean())
         throw new JsltException("Cannot convert " + node + " to boolean");
       else
-        return node.asBoolean();
+        return node.booleanValue();
     }
   }
 
@@ -135,7 +134,7 @@ public class FunctionWrapper implements Function {
       if (!node.isNumber())
         throw new JsltException("Cannot convert " + node + " to double");
       else
-        return node.asDouble();
+        return node.doubleValue();
     }
   }
 
@@ -167,7 +166,7 @@ public class FunctionWrapper implements Function {
       if (node == null)
         return JsonNull.instance;
       else
-        return new TextNode((String) node);
+        return new JsonString((String) node);
     }
   }
 
@@ -176,7 +175,7 @@ public class FunctionWrapper implements Function {
       if (node == null)
         return JsonNull.instance;
       else
-        return new LongNode((Long) node);
+        return new JsonLong((Long) node);
     }
   }
 
@@ -185,7 +184,7 @@ public class FunctionWrapper implements Function {
       if (node == null)
         return JsonNull.instance;
       else
-        return new IntNode((Integer) node);
+        return new JsonInt((Integer) node);
     }
   }
 
@@ -194,9 +193,9 @@ public class FunctionWrapper implements Function {
       if (node == null)
         return JsonNull.instance;
       else if ((Boolean) node)
-        return BooleanNode.TRUE;
+        return JsonBoolean.TRUE;
       else
-        return BooleanNode.FALSE;
+        return JsonBoolean.FALSE;
     }
   }
 
@@ -205,7 +204,7 @@ public class FunctionWrapper implements Function {
       if (node == null)
         return JsonNull.instance;
       else
-        return new DoubleNode((Double) node);
+        return new JsonDouble((Double) node);
     }
   }
 
@@ -214,7 +213,7 @@ public class FunctionWrapper implements Function {
       if (node == null)
         return JsonNull.instance;
       else
-        return new FloatNode((Float) node);
+        return new JsonDouble((Float) node);
     }
   }
 }

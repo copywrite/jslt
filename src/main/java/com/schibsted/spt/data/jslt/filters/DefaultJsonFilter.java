@@ -15,8 +15,8 @@
 
 package com.schibsted.spt.data.jslt.filters;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.schibsted.spt.data.jslt.impl.NodeUtils;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 /**
  * The filter that JSLT uses by default.
@@ -26,7 +26,7 @@ public class DefaultJsonFilter implements JsonFilter {
   /**
    * Whether or not to accept this value.
    */
-  public boolean filter(JsonNode value) {
+  public boolean filter(JsonValue value) {
     return NodeUtils.isValue(value);
   }
 

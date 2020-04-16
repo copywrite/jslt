@@ -16,6 +16,9 @@
 package com.schibsted.spt.data.jslt.impl;
 
 
+import com.schibsted.spt.data.jslt.json.JsonDouble;
+import com.schibsted.spt.data.jslt.json.JsonLong;
+import com.schibsted.spt.data.jslt.json.JsonNull;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class DivideOperator extends NumericOperator {
@@ -27,7 +30,7 @@ public class DivideOperator extends NumericOperator {
 
   public JsonValue perform(JsonValue v1, JsonValue v2) {
     if (v1.isNull() || v2.isNull())
-      return NullNode.instance;
+      return JsonNull.instance;
 
     // we only support the numeric operation and nothing else
     v1 = NodeUtils.number(v1, true, location);
@@ -37,11 +40,11 @@ public class DivideOperator extends NumericOperator {
       long l1 = v1.longValue();
       long l2 = v2.longValue();
       if (l1 % l2 == 0)
-        return new LongNode(l1 / l2);
+        return new JsonLong(l1 / l2);
       else
-        return new DoubleNode((double) l1 / (double) l2);
+        return new JsonDouble((double) l1 / (double) l2);
     } else
-      return new DoubleNode(perform(v1.doubleValue(), v2.doubleValue()));
+      return new JsonDouble(perform(v1.doubleValue(), v2.doubleValue()));
   }
 
   protected double perform(double v1, double v2) {

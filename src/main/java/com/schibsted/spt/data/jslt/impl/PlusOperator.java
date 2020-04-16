@@ -16,6 +16,9 @@
 package com.schibsted.spt.data.jslt.impl;
 
 
+import com.schibsted.spt.data.jslt.json.JsonArray;
+import com.schibsted.spt.data.jslt.json.JsonObject;
+import com.schibsted.spt.data.jslt.json.JsonString;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class PlusOperator extends NumericOperator {
@@ -26,9 +29,9 @@ public class PlusOperator extends NumericOperator {
   }
 
   public JsonValue perform(JsonValue v1, JsonValue v2) {
-    if (v1.isTextual() || v2.isTextual()) {
+    if (v1.isString() || v2.isString()) {
       // if one operand is string: do string concatenation
-      return new TextNode(NodeUtils.toString(v1, false) +
+      return new JsonString(NodeUtils.toString(v1, false) +
                           NodeUtils.toString(v2, false));
 
     } else if (v1.isArray() && v2.isArray())
@@ -60,19 +63,19 @@ public class PlusOperator extends NumericOperator {
     return v1 + v2;
   }
 
-  private ArrayNode concatenateArrays(JsonValue v1, JsonValue v2) {
+  private JsonArray concatenateArrays(JsonValue v1, JsonValue v2) {
     // .addAll is faster than many .add() calls
-    ArrayNode result = NodeUtils.mapper.createArrayNode();
-    result.addAll((ArrayNode) v1);
-    result.addAll((ArrayNode) v2);
+    JsonArray result = NodeUtils.mapper.createArrayNode();
+    result.addAll((JsonArray) v1);
+    result.addAll((JsonArray) v2);
     return result;
   }
 
-  private ObjectNode unionObjects(JsonValue v1, JsonValue v2) {
+  private JsonObject unionObjects(JsonValue v1, JsonValue v2) {
     // .putAll is faster than many .set() calls
-    ObjectNode result = NodeUtils.mapper.createObjectNode();
-    result.putAll((ObjectNode) v2);
-    result.putAll((ObjectNode) v1); // v1 should overwrite v2
+    JsonObject result = NodeUtils.mapper.createObjectNode();
+    result.putAll((JsonObject) v2);
+    result.putAll((JsonObject) v1); // v1 should overwrite v2
     return result;
   }
 }

@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonArray;
+import com.schibsted.spt.data.jslt.json.JsonNull;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class ForExpression extends AbstractNode {
@@ -42,13 +44,13 @@ public class ForExpression extends AbstractNode {
   public JsonValue apply(Scope scope, JsonValue input) {
     JsonValue array = valueExpr.apply(scope, input);
     if (array.isNull())
-      return NullNode.instance;
+      return JsonNull.instance;
     else if (array.isObject())
       array = NodeUtils.convertObjectToArray(array);
     else if (!array.isArray())
       throw new JsltException("For loop can't iterate over " + array, location);
 
-    ArrayNode result = NodeUtils.mapper.createArrayNode();
+    JsonArray result = new JsonArray();
     for (int ix = 0; ix < array.size(); ix++) {
       JsonValue value = array.get(ix);
 

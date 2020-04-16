@@ -18,7 +18,9 @@ package com.schibsted.spt.data.jslt.impl;
 import java.util.List;
 import java.util.ArrayList;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonArray;
 import com.schibsted.spt.data.jslt.json.JsonNull;
+import com.schibsted.spt.data.jslt.json.JsonString;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
 /**
@@ -41,25 +43,25 @@ public class ArraySlicer extends AbstractNode {
 
   public JsonValue apply(Scope scope, JsonValue input) {
     JsonValue sequence = parent.apply(scope, input);
-    if (!sequence.isArray() && !sequence.isTextual())
+    if (!sequence.isArray() && !sequence.isString())
       return JsonNull.instance;
 
     int size = sequence.size();
-    if (sequence.isTextual())
-      size = sequence.asText().length();
+    if (sequence.isString())
+      size = sequence.stringValue().length();
 
     int leftix = resolveIndex(scope, left, input, size, 0);
     if (!colon) {
       if (sequence.isArray()) {
         JsonValue val = sequence.get(leftix);
         if (val == null)
-          val = NullNode.instance;
+          val = JsonNull.instance;
         return val;
       } else {
-        String string = sequence.asText();
+        String string = sequence.stringValue();
         if (leftix >= string.length())
           throw new JsltException("String index out of range: " + leftix, location);
-        return new TextNode("" + string.charAt(leftix));
+        return new JsonString("" + string.charAt(leftix));
       }
     }
 
@@ -68,13 +70,13 @@ public class ArraySlicer extends AbstractNode {
       rightix = size;
 
     if (sequence.isArray()) {
-      ArrayNode result = NodeUtils.mapper.createArrayNode();
+      JsonArray result = new JsonArray();
       for (int ix = leftix; ix < rightix; ix++)
         result.add(sequence.get(ix));
       return result;
     } else {
-      String string = sequence.asText();
-      return new TextNode(string.substring(leftix, rightix));
+      String string = sequence.stringValue();
+      return new JsonString(string.substring(leftix, rightix));
     }
   }
 

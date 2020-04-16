@@ -18,12 +18,11 @@ package com.schibsted.spt.data.jslt.impl;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Iterator;
+
 import com.schibsted.spt.data.jslt.JsltException;
-import com.schibsted.spt.data.jslt.json.JsonValue;
+import com.schibsted.spt.data.jslt.json.*;
 
 public class NodeUtils {
-  public static final ObjectMapper mapper = new ObjectMapper();
-
   public static void evalLets(Scope scope, JsonValue input, LetExpression[] lets) {
     if (lets == null)
       return;
@@ -36,9 +35,9 @@ public class NodeUtils {
   }
 
   public static boolean isTrue(JsonValue value) {
-    return value != BooleanNode.FALSE &&
+    return value != JsonBoolean.FALSE &&
       !(value.isObject() && value.size() == 0) &&
-      !(value.isTextual() && value.asText().length() == 0) &&
+      !(value.isString() && value.stringValue().length() == 0) &&
       !(value.isArray() && value.size() == 0) &&
       !(value.isNumber() && value.doubleValue() == 0.0) &&
       !value.isNull();
@@ -52,17 +51,17 @@ public class NodeUtils {
 
   public static JsonValue toJson(boolean value) {
     if (value)
-      return BooleanNode.TRUE;
+      return JsonBoolean.TRUE;
     else
-      return BooleanNode.FALSE;
+      return JsonBoolean.FALSE;
   }
 
   public static JsonValue toJson(double value) {
-    return new DoubleNode(value);
+    return new JsonDouble(value);
   }
 
   public static JsonValue toJson(String[] array) {
-    ArrayNode node = NodeUtils.mapper.createArrayNode();
+    JsonArray node = new JsonArray();
     for (int ix = 0; ix < array.length; ix++)
       node.add(array[ix]);
     return node;
@@ -71,8 +70,8 @@ public class NodeUtils {
   // nullok => return Java null for Json null
   public static String toString(JsonValue value, boolean nullok) {
     // check what type this is
-    if (value.isTextual())
-      return value.asText();
+    if (value.isString())
+      return value.stringValue();
     else if (value.isNull() && nullok)
       return null;
 
@@ -80,10 +79,10 @@ public class NodeUtils {
     return value.toString();
   }
 
-  public static ArrayNode toArray(JsonValue value, boolean nullok) {
+  public static JsonArray toArray(JsonValue value, boolean nullok) {
     // check what type this is
     if (value.isArray())
-      return (ArrayNode) value;
+      return (JsonArray) value;
     else if (value.isNull() && nullok)
       return null;
 
@@ -110,11 +109,11 @@ public class NodeUtils {
         return value;
       else
         return fallback;
-    } else if (!value.isTextual()) {
+    } else if (!value.isString()) {
       if (strict)
         throw new JsltException("Can't convert " + value + " to number", loc);
       else if (fallback == null)
-        return NullNode.instance;
+        return JsonNull.instance;
       else
         return fallback;
     }
@@ -122,7 +121,7 @@ public class NodeUtils {
     // let's look at this number. There are a ton of number formats,
     // so just let Jackson handle it.
     String number = value.asText();
-    JsonNode numberNode = null;
+    JsonValue numberNode = null;
     try {
         numberNode = mapper.readTree(number);
     } catch (IOException e) {}
@@ -138,14 +137,14 @@ public class NodeUtils {
     }
   }
 
-  public static ArrayNode convertObjectToArray(JsonValue object) {
-    ArrayNode array = mapper.createArrayNode();
-    Iterator<Map.Entry<String, JsonNode>> it = object.fields();
+  public static JsonArray convertObjectToArray(JsonValue object) {
+    JsonArray array = new JsonArray();
+    Iterator<Map.Entry<String, JsonValue>> it = object.fields();
     while (it.hasNext()) {
-      Map.Entry<String, JsonNode> item = it.next();
-      ObjectNode element = NodeUtils.mapper.createObjectNode();
-      element.set("key", new TextNode(item.getKey()));
-      element.set("value", item.getValue());
+      Map.Entry<String, JsonValue> item = it.next();
+      JsonObject element = new JsonObject();
+      element.put("key", new JsonString(item.getKey()));
+      element.put("value", item.getValue());
       array.add(element);
     }
     return array;

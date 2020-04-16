@@ -15,6 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import com.schibsted.spt.data.jslt.json.JsonArray;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class ArrayExpression extends AbstractNode {
   }
 
   public JsonValue apply(Scope scope, JsonValue input) {
-    ArrayNode array = NodeUtils.mapper.createArrayNode();
+    JsonArray array = new JsonArray();
     for (int ix = 0; ix < children.length; ix++)
       array.add(children[ix].apply(scope, input));
     return array;

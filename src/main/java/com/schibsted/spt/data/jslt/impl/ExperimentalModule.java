@@ -20,6 +20,9 @@ import java.util.HashMap;
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonArray;
+import com.schibsted.spt.data.jslt.json.JsonNull;
+import com.schibsted.spt.data.jslt.json.JsonObject;
 import com.schibsted.spt.data.jslt.json.JsonValue;
 
 /**
@@ -58,35 +61,35 @@ public class ExperimentalModule implements Module {
       // first find the array that we iterate over
       JsonValue array = parameters[0].apply(scope, input);
       if (array.isNull())
-        return NullNode.instance;
+        return JsonNull.instance;
       else if (array.isObject())
         array = NodeUtils.convertObjectToArray(array);
       else if (!array.isArray())
         throw new JsltException("Can't group-by on " + array);
 
       // now start grouping
-      Map<JsonValue, ArrayNode> groups = new HashMap();
+      Map<JsonValue, JsonArray> groups = new HashMap();
       for (int ix = 0; ix < array.size(); ix++) {
         JsonValue groupInput = array.get(ix);
         JsonValue key = parameters[1].apply(scope, groupInput);
         JsonValue value = parameters[2].apply(scope, groupInput);
 
-        ArrayNode values = (ArrayNode) groups.get(key);
+        JsonArray values = (JsonArray) groups.get(key);
         if (values == null) {
-          values = NodeUtils.mapper.createArrayNode();
+          values = new JsonArray();
           groups.put(key, values);
         }
         values.add(value);
       }
 
       // grouping is done, build JSON output
-      ArrayNode result = NodeUtils.mapper.createArrayNode();
-      for (JsonNode key : groups.keySet()) {
-        ObjectNode group = NodeUtils.mapper.createObjectNode();
-        group.set("key", key);
-        group.set("values", groups.get(key));
+      JsonArray result = new JsonArray();
+      groups.keySet().forEach(key -> {
+        JsonObject group = new JsonObject();
+        group.put("key", key);
+        group.put("values", groups.get(key));
         result.add(group);
-      }
+      });
 
       return result;
     }

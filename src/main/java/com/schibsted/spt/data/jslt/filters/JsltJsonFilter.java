@@ -15,9 +15,9 @@
 
 package com.schibsted.spt.data.jslt.filters;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.impl.NodeUtils;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 /**
  * Used for object filtering with JSLT expressions.
@@ -32,7 +32,7 @@ public class JsltJsonFilter implements JsonFilter {
   /**
    * Whether or not to accept this value.
    */
-  public boolean filter(JsonNode value) {
+  public boolean filter(JsonValue value) {
     return NodeUtils.isTrue(jslt.apply(value));
   }
 
