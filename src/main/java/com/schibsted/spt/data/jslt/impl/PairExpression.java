@@ -15,9 +15,10 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import com.schibsted.spt.data.jslt.json.JsonValue;
+
 import java.util.List;
 import java.util.Collections;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Represents a ("key" : expr) pair inside a JSON object.
@@ -36,7 +37,7 @@ public class PairExpression extends AbstractNode {
     return key;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
+  public JsonValue apply(Scope scope, JsonValue input) {
     return expr.apply(scope, input);
   }
 

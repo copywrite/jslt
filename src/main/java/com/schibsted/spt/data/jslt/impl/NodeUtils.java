@@ -18,33 +18,24 @@ package com.schibsted.spt.data.jslt.impl;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Iterator;
-import java.util.Collections;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class NodeUtils {
   public static final ObjectMapper mapper = new ObjectMapper();
 
-  public static void evalLets(Scope scope, JsonNode input, LetExpression[] lets) {
+  public static void evalLets(Scope scope, JsonValue input, LetExpression[] lets) {
     if (lets == null)
       return;
 
     for (int ix = 0; ix < lets.length; ix++) {
       String var = lets[ix].getVariable();
-      JsonNode val = lets[ix].apply(scope, input);
+      JsonValue val = lets[ix].apply(scope, input);
       scope.setValue(lets[ix].getSlot(), val);
     }
   }
 
-  public static boolean isTrue(JsonNode value) {
+  public static boolean isTrue(JsonValue value) {
     return value != BooleanNode.FALSE &&
       !(value.isObject() && value.size() == 0) &&
       !(value.isTextual() && value.asText().length() == 0) &&
@@ -53,24 +44,24 @@ public class NodeUtils {
       !value.isNull();
   }
 
-  public static boolean isValue(JsonNode value) {
+  public static boolean isValue(JsonValue value) {
     return !value.isNull() &&
       !(value.isObject() && value.size() == 0) &&
       !(value.isArray() && value.size() == 0);
   }
 
-  public static JsonNode toJson(boolean value) {
+  public static JsonValue toJson(boolean value) {
     if (value)
       return BooleanNode.TRUE;
     else
       return BooleanNode.FALSE;
   }
 
-  public static JsonNode toJson(double value) {
+  public static JsonValue toJson(double value) {
     return new DoubleNode(value);
   }
 
-  public static JsonNode toJson(String[] array) {
+  public static JsonValue toJson(String[] array) {
     ArrayNode node = NodeUtils.mapper.createArrayNode();
     for (int ix = 0; ix < array.length; ix++)
       node.add(array[ix]);
@@ -78,7 +69,7 @@ public class NodeUtils {
   }
 
   // nullok => return Java null for Json null
-  public static String toString(JsonNode value, boolean nullok) {
+  public static String toString(JsonValue value, boolean nullok) {
     // check what type this is
     if (value.isTextual())
       return value.asText();
@@ -89,7 +80,7 @@ public class NodeUtils {
     return value.toString();
   }
 
-  public static ArrayNode toArray(JsonNode value, boolean nullok) {
+  public static ArrayNode toArray(JsonValue value, boolean nullok) {
     // check what type this is
     if (value.isArray())
       return (ArrayNode) value;
@@ -99,18 +90,18 @@ public class NodeUtils {
     throw new JsltException("Cannot convert " + value + " to array");
   }
 
-  public static JsonNode number(JsonNode value, Location loc) {
+  public static JsonValue number(JsonValue value, Location loc) {
     return number(value, false, loc);
   }
 
-  public static JsonNode number(JsonNode value, boolean strict, Location loc) {
+  public static JsonValue number(JsonValue value, boolean strict, Location loc) {
     // this works, because Java null can never be a function parameter
     // in JSTL, unlike JSON null
     return number(value, strict, loc, null);
   }
 
-  public static JsonNode number(JsonNode value, boolean strict, Location loc,
-                                JsonNode fallback) {
+  public static JsonValue number(JsonValue value, boolean strict, Location loc,
+                                 JsonValue fallback) {
     // check what type this is
     if (value.isNumber())
       return value;
@@ -147,7 +138,7 @@ public class NodeUtils {
     }
   }
 
-  public static ArrayNode convertObjectToArray(JsonNode object) {
+  public static ArrayNode convertObjectToArray(JsonValue object) {
     ArrayNode array = mapper.createArrayNode();
     Iterator<Map.Entry<String, JsonNode>> it = object.fields();
     while (it.hasNext()) {

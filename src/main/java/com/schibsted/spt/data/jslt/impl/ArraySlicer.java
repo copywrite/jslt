@@ -17,12 +17,9 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.List;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonNull;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 /**
  * Indexing and slicing of arrays and also strings.
@@ -42,10 +39,10 @@ public class ArraySlicer extends AbstractNode {
     this.parent = parent;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
-    JsonNode sequence = parent.apply(scope, input);
+  public JsonValue apply(Scope scope, JsonValue input) {
+    JsonValue sequence = parent.apply(scope, input);
     if (!sequence.isArray() && !sequence.isTextual())
-      return NullNode.instance;
+      return JsonNull.instance;
 
     int size = sequence.size();
     if (sequence.isTextual())
@@ -54,7 +51,7 @@ public class ArraySlicer extends AbstractNode {
     int leftix = resolveIndex(scope, left, input, size, 0);
     if (!colon) {
       if (sequence.isArray()) {
-        JsonNode val = sequence.get(leftix);
+        JsonValue val = sequence.get(leftix);
         if (val == null)
           val = NullNode.instance;
         return val;
@@ -82,11 +79,11 @@ public class ArraySlicer extends AbstractNode {
   }
 
   private int resolveIndex(Scope scope, ExpressionNode expr,
-                           JsonNode input, int size, int ifnull) {
+                           JsonValue input, int size, int ifnull) {
     if (expr == null)
       return ifnull;
 
-    JsonNode node = expr.apply(scope, input);
+    JsonValue node = expr.apply(scope, input);
     if (!node.isNumber())
       throw new JsltException("Can't index array/string with " + node, location);
 

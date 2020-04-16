@@ -15,12 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class MultiplyOperator extends NumericOperator {
 
@@ -29,7 +25,7 @@ public class MultiplyOperator extends NumericOperator {
     super(left, right, "*", location);
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
+  public JsonValue perform(JsonValue v1, JsonValue v2) {
     if (v1.isTextual() || v2.isTextual()) {
       // if one operand is string: do string multiplication
 

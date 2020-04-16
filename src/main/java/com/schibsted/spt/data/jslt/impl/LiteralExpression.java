@@ -15,19 +15,19 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class LiteralExpression extends AbstractNode {
-  private JsonNode value;
+  private JsonValue value;
 
-  public LiteralExpression(JsonNode value, Location location) {
+  public LiteralExpression(JsonValue value, Location location) {
     super(location);
     this.value = value;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
+  public JsonValue apply(Scope scope, JsonValue input) {
     return value;
   }
 

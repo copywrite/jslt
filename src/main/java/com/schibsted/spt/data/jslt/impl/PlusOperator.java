@@ -15,14 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.schibsted.spt.data.jslt.JsltException;
+
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class PlusOperator extends NumericOperator {
 
@@ -31,7 +25,7 @@ public class PlusOperator extends NumericOperator {
     super(left, right, "+", location);
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
+  public JsonValue perform(JsonValue v1, JsonValue v2) {
     if (v1.isTextual() || v2.isTextual()) {
       // if one operand is string: do string concatenation
       return new TextNode(NodeUtils.toString(v1, false) +
@@ -66,7 +60,7 @@ public class PlusOperator extends NumericOperator {
     return v1 + v2;
   }
 
-  private ArrayNode concatenateArrays(JsonNode v1, JsonNode v2) {
+  private ArrayNode concatenateArrays(JsonValue v1, JsonValue v2) {
     // .addAll is faster than many .add() calls
     ArrayNode result = NodeUtils.mapper.createArrayNode();
     result.addAll((ArrayNode) v1);
@@ -74,7 +68,7 @@ public class PlusOperator extends NumericOperator {
     return result;
   }
 
-  private ObjectNode unionObjects(JsonNode v1, JsonNode v2) {
+  private ObjectNode unionObjects(JsonValue v1, JsonValue v2) {
     // .putAll is faster than many .set() calls
     ObjectNode result = NodeUtils.mapper.createObjectNode();
     result.putAll((ObjectNode) v2);

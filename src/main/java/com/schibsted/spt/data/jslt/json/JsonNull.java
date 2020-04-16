@@ -7,4 +7,8 @@ package com.schibsted.spt.data.jslt.json;
  * Singleton?
  */
 public class JsonNull extends JsonValue {
+
+    public static final JsonNull instance = new JsonNull();
+
+    private JsonNull() {}
 }

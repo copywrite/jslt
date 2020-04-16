@@ -15,8 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.schibsted.spt.data.jslt.Callable;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 /**
  * Interface implemented by all macros. A macro is like a function,
@@ -30,6 +30,6 @@ public interface Macro extends Callable {
    * Invokes the macro, which can then modify the input node and
    * evaluate the parameters as needed.
    */
-  public JsonNode call(Scope scope, JsonNode input, ExpressionNode[] parameters);
+  public JsonValue call(Scope scope, JsonValue input, ExpressionNode[] parameters);
 
 }

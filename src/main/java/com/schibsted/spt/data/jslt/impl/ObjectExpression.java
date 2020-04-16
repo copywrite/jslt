@@ -22,14 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.filters.JsonFilter;
+import com.schibsted.spt.data.jslt.json.JsonNull;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class ObjectExpression extends AbstractNode {
   private LetExpression[] lets;
@@ -58,12 +53,12 @@ public class ObjectExpression extends AbstractNode {
         keys.add(minus);
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
+  public JsonValue apply(Scope scope, JsonValue input) {
     NodeUtils.evalLets(scope, input, lets);
 
     ObjectNode object = NodeUtils.mapper.createObjectNode();
     for (int ix = 0; ix < children.length; ix++) {
-      JsonNode value = children[ix].apply(scope, input);
+      JsonValue value = children[ix].apply(scope, input);
       if (filter.filter(value))
         object.put(children[ix].getKey(), value);
     }
@@ -74,20 +69,20 @@ public class ObjectExpression extends AbstractNode {
     return object;
   }
 
-  private void evaluateMatcher(Scope scope, JsonNode input, ObjectNode object) {
+  private void evaluateMatcher(Scope scope, JsonValue input, ObjectNode object) {
     // find the object to match against
-    JsonNode context = contextQuery.apply(scope, input);
+    JsonValue context = contextQuery.apply(scope, input);
     if (context.isNull() && !context.isObject())
       return; // no keys to match against
 
     // then do the matching
-    Iterator<Map.Entry<String, JsonNode>> it = context.fields();
+    Iterator<Map.Entry<String, JsonValue>> it = context.fields();
     while (it.hasNext()) {
-      Map.Entry<String, JsonNode> pair = it.next();
+      Map.Entry<String, JsonValue> pair = it.next();
       if (keys.contains(pair.getKey()))
         continue; // the template has defined this key, so skip
 
-      JsonNode value = matcher.apply(scope, pair.getValue());
+      JsonValue value = matcher.apply(scope, pair.getValue());
       object.put(pair.getKey(), value);
     }
   }
@@ -122,7 +117,7 @@ public class ObjectExpression extends AbstractNode {
     // we're a static object expression. we can just make the object and
     // turn that into a literal, instead of creating it over and over
     // apply parameters: literals won't use scope or input, so...
-    JsonNode object = apply(new OptimizerScope(), NullNode.instance);
+    JsonValue object = apply(new OptimizerScope(), JsonNull.instance);
     return new LiteralExpression(object, location);
   }
 

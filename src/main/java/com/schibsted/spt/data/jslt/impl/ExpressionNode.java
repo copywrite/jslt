@@ -15,9 +15,9 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.List;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
+import java.util.List;
 /**
  * Internal interface for the parts of a compiled JSTL 2.0 expression.
  * Different from the external interface because we want to avoid
@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public interface ExpressionNode {
 
-  public JsonNode apply(Scope scope, JsonNode input);
+  public JsonValue apply(Scope scope, JsonValue input);
 
   // writes debug info to stdout
   public void dump(int level);

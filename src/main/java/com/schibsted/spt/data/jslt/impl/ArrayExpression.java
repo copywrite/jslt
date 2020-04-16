@@ -15,10 +15,10 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import com.schibsted.spt.data.jslt.json.JsonValue;
+
 import java.util.List;
 import java.util.Arrays;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class ArrayExpression extends AbstractNode {
   private ExpressionNode[] children;
@@ -28,7 +28,7 @@ public class ArrayExpression extends AbstractNode {
     this.children = children;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
+  public JsonValue apply(Scope scope, JsonValue input) {
     ArrayNode array = NodeUtils.mapper.createArrayNode();
     for (int ix = 0; ix < children.length; ix++)
       array.add(children[ix].apply(scope, input));
@@ -56,7 +56,7 @@ public class ArrayExpression extends AbstractNode {
 
     // we're a static array expression. we can just make the array and
     // turn that into a literal, instead of creating it over and over
-    JsonNode array = apply(null, null); // literals won't use scope or input
+    JsonValue array = apply(null, null); // literals won't use scope or input
     return new LiteralExpression(array, location);
   }
 

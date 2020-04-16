@@ -15,12 +15,12 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import com.schibsted.spt.data.jslt.json.JsonNull;
+import com.schibsted.spt.data.jslt.json.JsonValue;
+
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
 
 public class IfExpression extends AbstractNode {
   private ExpressionNode test;
@@ -43,7 +43,7 @@ public class IfExpression extends AbstractNode {
     this.orelse = orelse;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
+  public JsonValue apply(Scope scope, JsonValue input) {
     if (NodeUtils.isTrue(test.apply(scope, input))) {
       NodeUtils.evalLets(scope, input, thenlets);
       return then.apply(scope, input);
@@ -54,7 +54,7 @@ public class IfExpression extends AbstractNode {
       NodeUtils.evalLets(scope, input, elselets);
       return orelse.apply(scope, input);
     } else
-      return NullNode.instance;
+      return JsonNull.instance;
   }
 
   public void computeMatchContexts(DotExpression parent) {

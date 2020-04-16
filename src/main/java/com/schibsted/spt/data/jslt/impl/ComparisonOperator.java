@@ -15,8 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public abstract class ComparisonOperator extends AbstractOperator {
 
@@ -25,9 +25,9 @@ public abstract class ComparisonOperator extends AbstractOperator {
     super(left, right, operator, location);
   }
 
-  public abstract JsonNode perform(JsonNode v1, JsonNode v2);
+  public abstract JsonValue perform(JsonValue v1, JsonValue v2);
 
-  public double compare(JsonNode v1, JsonNode v2) {
+  public double compare(JsonValue v1, JsonValue v2) {
     if (v1.isNumber() && v2.isNumber()) {
       double n1 = NodeUtils.number(v1, location).doubleValue();
       double n2 = NodeUtils.number(v2, location).doubleValue();

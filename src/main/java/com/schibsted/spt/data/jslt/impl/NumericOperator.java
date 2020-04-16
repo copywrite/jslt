@@ -15,11 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.schibsted.spt.data.jslt.json.JsonNull;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public abstract class NumericOperator extends AbstractOperator {
 
@@ -28,9 +25,9 @@ public abstract class NumericOperator extends AbstractOperator {
     super(left, right, name, location);
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
+  public JsonValue perform(JsonValue v1, JsonValue v2) {
     if (v1.isNull() || v2.isNull())
-      return NullNode.instance;
+      return JsonNull.instance;
 
     v1 = NodeUtils.number(v1, true, location);
     v2 = NodeUtils.number(v2, true, location);

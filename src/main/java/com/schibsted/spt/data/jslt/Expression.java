@@ -15,8 +15,9 @@
 
 package com.schibsted.spt.data.jslt;
 
+import com.schibsted.spt.data.jslt.json.JsonValue;
+
 import java.util.Map;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Represents a compiled JSLT expression.
@@ -35,7 +36,7 @@ public interface Expression {
    * Evaluate the expression on the given JSON input.
    * @param input The JSON input to evaluate the expression on.
    */
-  public JsonNode apply(JsonNode input);
+  public JsonValue apply(JsonValue input);
 
   /**
    * Evaluate the expression on the given JSON input, with the given
@@ -43,6 +44,6 @@ public interface Expression {
    * @param variables Variable bindings visible inside the expression.
    * @param input The JSON input to evaluate the expression on.
    */
-  public JsonNode apply(Map<String, JsonNode> variables, JsonNode input);
+  public JsonValue apply(Map<String, JsonValue> variables, JsonValue input);
 
 }

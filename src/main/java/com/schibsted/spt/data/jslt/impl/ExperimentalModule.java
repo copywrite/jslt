@@ -17,13 +17,10 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.Map;
 import java.util.HashMap;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 /**
  * A module containing functions and macros that *may* be officially
@@ -53,13 +50,13 @@ public class ExperimentalModule implements Module {
       super("group-by", 3, 3);
     }
 
-    public JsonNode call(Scope scope, JsonNode input,
-                         ExpressionNode[] parameters) {
+    public JsonValue call(Scope scope, JsonValue input,
+                          ExpressionNode[] parameters) {
       // this has to be a macro, because the second argument needs to be
       // evaluated in a special context
 
       // first find the array that we iterate over
-      JsonNode array = parameters[0].apply(scope, input);
+      JsonValue array = parameters[0].apply(scope, input);
       if (array.isNull())
         return NullNode.instance;
       else if (array.isObject())
@@ -68,11 +65,11 @@ public class ExperimentalModule implements Module {
         throw new JsltException("Can't group-by on " + array);
 
       // now start grouping
-      Map<JsonNode, ArrayNode> groups = new HashMap();
+      Map<JsonValue, ArrayNode> groups = new HashMap();
       for (int ix = 0; ix < array.size(); ix++) {
-        JsonNode groupInput = array.get(ix);
-        JsonNode key = parameters[1].apply(scope, groupInput);
-        JsonNode value = parameters[2].apply(scope, groupInput);
+        JsonValue groupInput = array.get(ix);
+        JsonValue key = parameters[1].apply(scope, groupInput);
+        JsonValue value = parameters[2].apply(scope, groupInput);
 
         ArrayNode values = (ArrayNode) groups.get(key);
         if (values == null) {

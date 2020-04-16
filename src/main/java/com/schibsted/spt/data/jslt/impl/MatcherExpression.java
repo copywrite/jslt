@@ -15,9 +15,10 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import com.schibsted.spt.data.jslt.json.JsonValue;
+
 import java.util.List;
 import java.util.Collections;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Represents the '* - ... : .'
@@ -37,7 +38,7 @@ public class MatcherExpression extends AbstractNode {
     return minuses;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
+  public JsonValue apply(Scope scope, JsonValue input) {
     return expr.apply(scope, input);
   }
 

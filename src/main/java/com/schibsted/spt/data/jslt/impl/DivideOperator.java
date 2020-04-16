@@ -15,14 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.schibsted.spt.data.jslt.JsltException;
+
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class DivideOperator extends NumericOperator {
 
@@ -31,7 +25,7 @@ public class DivideOperator extends NumericOperator {
     super(left, right, "/", location);
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
+  public JsonValue perform(JsonValue v1, JsonValue v2) {
     if (v1.isNull() || v2.isNull())
       return NullNode.instance;
 

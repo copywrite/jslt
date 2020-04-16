@@ -18,10 +18,8 @@ package com.schibsted.spt.data.jslt.impl;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 public class ForExpression extends AbstractNode {
   private ExpressionNode valueExpr;
@@ -41,8 +39,8 @@ public class ForExpression extends AbstractNode {
     this.ifExpr = ifExpr;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
-    JsonNode array = valueExpr.apply(scope, input);
+  public JsonValue apply(Scope scope, JsonValue input) {
+    JsonValue array = valueExpr.apply(scope, input);
     if (array.isNull())
       return NullNode.instance;
     else if (array.isObject())
@@ -52,7 +50,7 @@ public class ForExpression extends AbstractNode {
 
     ArrayNode result = NodeUtils.mapper.createArrayNode();
     for (int ix = 0; ix < array.size(); ix++) {
-      JsonNode value = array.get(ix);
+      JsonValue value = array.get(ix);
 
       // must evaluate lets over again for each value because of context
       if (lets.length > 0)
