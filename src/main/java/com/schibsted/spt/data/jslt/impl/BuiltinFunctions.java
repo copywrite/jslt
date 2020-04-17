@@ -726,7 +726,7 @@ public class BuiltinFunctions {
         return JsonNull.instance;
 
       try {
-        JsonValue parsed = NodeUtils.mapper.readTree(json);
+        JsonValue parsed = JsonUtils.fromJson(json);
         if (parsed == null) // if input is "", for example
           return JsonNull.instance;
         return parsed;
@@ -749,7 +749,7 @@ public class BuiltinFunctions {
 
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       try {
-        String json = NodeUtils.mapper.writeValueAsString(arguments[0]);
+        String json = JsonUtils.toJson(arguments[0]);
         return new JsonString(json);
       } catch (Exception e) {
         throw new JsltException("to-json can't serialize " + arguments[0] + ": " + e);
@@ -1062,7 +1062,7 @@ public class BuiltinFunctions {
       if (number == null || number.isNull())
         return JsonNull.instance;
 
-      double timestamp = number.asDouble();
+      double timestamp = JsonUtils.asDouble(number);
 
       String formatstr = NodeUtils.toString(arguments[1], false);
 

@@ -120,10 +120,10 @@ public class NodeUtils {
 
     // let's look at this number. There are a ton of number formats,
     // so just let Jackson handle it.
-    String number = value.asText();
+    String number = JsonUtils.asText(value);
     JsonValue numberNode = null;
     try {
-        numberNode = mapper.readTree(number);
+        numberNode = JsonUtils.fromJson(number);
     } catch (IOException e) {}
 
     if (numberNode == null || !numberNode.isNumber()) {

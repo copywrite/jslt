@@ -3,10 +3,10 @@
  *
  * Design principles:
  * 1. Concrete classes with public constructors.
- *    Pros: Avoid factories
+ *    Pros: Avoid factories. (Not really an issue with immutable types).
  *    Cons: Interfaces would allow different implementations depending on use-cases.
  *
- * 2. Immutability (not feasible)
+ * 2. Immutability (not feasible?)
  *    Pros: The usual ones. Low-cost thread safety.
  *    Cons: Java 8 doesn't have immutable maps and lists! Probably much trouble to create and
  *          maintain high-performance implementations just for JSLT. Need to investigate!
@@ -64,7 +64,7 @@ public abstract class JsonValue {
     public boolean isFloatingPointNumber() { return false; }
 
     // ??
-    public boolean has() { return false; }
+    public boolean has(String key) { return false; }
 
     // Really?
     public Iterator<Map.Entry<String, JsonValue>> fields() {

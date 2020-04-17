@@ -65,7 +65,7 @@ public class PlusOperator extends NumericOperator {
 
   private JsonArray concatenateArrays(JsonValue v1, JsonValue v2) {
     // .addAll is faster than many .add() calls
-    JsonArray result = NodeUtils.mapper.createArrayNode();
+    JsonArray result = new JsonArray();
     result.addAll((JsonArray) v1);
     result.addAll((JsonArray) v2);
     return result;
@@ -73,7 +73,7 @@ public class PlusOperator extends NumericOperator {
 
   private JsonObject unionObjects(JsonValue v1, JsonValue v2) {
     // .putAll is faster than many .set() calls
-    JsonObject result = NodeUtils.mapper.createObjectNode();
+    JsonObject result = new JsonObject();
     result.putAll((JsonObject) v2);
     result.putAll((JsonObject) v1); // v1 should overwrite v2
     return result;

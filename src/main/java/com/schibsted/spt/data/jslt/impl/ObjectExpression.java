@@ -57,7 +57,7 @@ public class ObjectExpression extends AbstractNode {
   public JsonValue apply(Scope scope, JsonValue input) {
     NodeUtils.evalLets(scope, input, lets);
 
-    JsonObject object = NodeUtils.mapper.createObjectNode();
+    JsonObject object = new JsonObject();
     for (int ix = 0; ix < children.length; ix++) {
       JsonValue value = children[ix].apply(scope, input);
       if (filter.filter(value))

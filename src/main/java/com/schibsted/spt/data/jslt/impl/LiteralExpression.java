@@ -17,7 +17,10 @@ package com.schibsted.spt.data.jslt.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.json.JsonUtils;
 import com.schibsted.spt.data.jslt.json.JsonValue;
+
+import java.io.IOException;
 
 public class LiteralExpression extends AbstractNode {
   private JsonValue value;
@@ -37,8 +40,8 @@ public class LiteralExpression extends AbstractNode {
 
   public String toString() {
     try {
-      return NodeUtils.mapper.writeValueAsString(value);
-    } catch (JsonProcessingException e) {
+      return JsonUtils.toJson(value);
+    } catch (IOException e) {
       throw new JsltException("Couldn't serialize literal value: " + e);
     }
   }
