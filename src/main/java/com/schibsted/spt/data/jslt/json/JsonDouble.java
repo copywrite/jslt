@@ -11,6 +11,7 @@ public class JsonDouble extends JsonNumber {
         this.value = value;
     }
 
+    //FIXME: We should probably do something about NaNs.
     @Override
     public String toString() { return String.valueOf(value); }
 
