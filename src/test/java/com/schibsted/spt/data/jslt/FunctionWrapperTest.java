@@ -3,6 +3,9 @@ package com.schibsted.spt.data.jslt;
 
 import java.util.Collection;
 import java.util.Collections;
+
+import com.schibsted.spt.data.jslt.json.JsonUtils;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 import org.junit.Test;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
@@ -38,10 +41,10 @@ public class FunctionWrapperTest extends TestBase {
 
     long before = System.currentTimeMillis();
 
-    JsonNode context = mapper.readTree("{}");
+    JsonValue context = JsonUtils.fromJson("{}");
     Expression expr = Parser.compileString(query, functions);
-    JsonNode actual = expr.apply(context);
-    long value = actual.asLong();
+    JsonValue actual = expr.apply(context);
+    long value = actual.longValue();
 
     long after = System.currentTimeMillis();
 
@@ -57,10 +60,10 @@ public class FunctionWrapperTest extends TestBase {
     );
     String query = "pow(2, 10)";
 
-    JsonNode context = mapper.readTree("{}");
+    JsonValue context = JsonUtils.fromJson("{}");
     Expression expr = Parser.compileString(query, functions);
-    JsonNode actual = expr.apply(context);
+    JsonValue actual = expr.apply(context);
 
-    assertTrue(actual.asInt() == 1024);
+    assertTrue(actual.longValue() == 1024);
   }
 }

@@ -13,6 +13,8 @@ import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.schibsted.spt.data.jslt.json.JsonUtils;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 
 /**
  * Utilities for test cases.
@@ -35,25 +37,25 @@ public class TestBase {
   }
 
   void check(String input, String query, String result,
-             Map<String, JsonNode> variables) {
+             Map<String, JsonValue> variables) {
     check(input, query, result, variables, Collections.EMPTY_SET);
   }
 
   void check(String input, String query, String result,
-             Map<String, JsonNode> variables,
+             Map<String, JsonValue> variables,
              Collection<Function> functions) {
     try {
-      JsonNode context = mapper.readTree(input);
+      JsonValue context = JsonUtils.fromJson(input);
 
       Expression expr = Parser.compileString(query, functions);
-      JsonNode actual = expr.apply(variables, context);
+      JsonValue actual = expr.apply(variables, context);
       if (actual == null)
         throw new JsltException("Returned Java null");
 
       // reparse to handle IntNode(2) != LongNode(2)
-      actual = mapper.readTree(mapper.writeValueAsString(actual));
+      actual = JsonUtils.fromJson(JsonUtils.toJson(actual));
 
-      JsonNode expected = mapper.readTree(result);
+      JsonValue expected = JsonUtils.fromJson(result);
 
       assertEquals("actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
     } catch (IOException e) {
@@ -61,9 +63,9 @@ public class TestBase {
     }
   }
 
-  JsonNode execute(String input, String query) {
+  JsonValue execute(String input, String query) {
     try {
-      JsonNode context = mapper.readTree(input);
+      JsonValue context = JsonUtils.fromJson(input);
       Expression expr = Parser.compileString(query);
       return expr.apply(context);
     } catch (IOException e) {
@@ -79,10 +81,10 @@ public class TestBase {
   // result must be contained in the error message
   void error(String input, String query, String result) {
     try {
-      JsonNode context = mapper.readTree(input);
+      JsonValue context = JsonUtils.fromJson(input);
 
       Expression expr = Parser.compileString(query);
-      JsonNode actual = expr.apply(context);
+      JsonValue actual = expr.apply(context);
       fail("JSLT did not detect error");
     } catch (JsltException e) {
       assertTrue("incorrect error message: '" + e.getMessage() + "'",

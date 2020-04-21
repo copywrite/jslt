@@ -75,7 +75,7 @@ public class ExpressionImpl implements Expression {
     // Jackson 2.9.2 can parse to Java null. See unit test
     // QueryTest.testNullInput. so we have to handle that
     if (input == null)
-      input = JsonNull.instance;
+      input = JsonNull.NULL;
 
     // evaluate lets in global modules
     if (fileModules != null) {

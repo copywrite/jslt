@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.io.IOException;
 
+import com.schibsted.spt.data.jslt.json.JsonUtils;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -17,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * JSON parsing test cases. Verifies that Jackson and JSLT produce the
@@ -25,7 +26,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @RunWith(Parameterized.class)
 public class JsonParseTest {
-  private static ObjectMapper mapper = new ObjectMapper();
   private String json;
 
   public JsonParseTest(String json) {
@@ -36,9 +36,9 @@ public class JsonParseTest {
   public void check() {
     try {
       Expression expr = Parser.compileString(json);
-      JsonNode actual = expr.apply(null);
+      JsonValue actual = expr.apply(null);
 
-      JsonNode expected = mapper.readTree(json);
+      JsonValue expected = JsonUtils.fromJson(json);
 
       assertEquals("actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
     } catch (IOException e) {

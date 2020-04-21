@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Collection;
 
+import com.schibsted.spt.data.jslt.json.JsonUtils;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -41,10 +43,10 @@ public class QueryErrorTest extends TestBase {
   @Test
   public void check() {
     try {
-      JsonNode context = mapper.readTree(input);
+      JsonValue context = JsonUtils.fromJson(input);
 
       Expression expr = Parser.compileString(query);
-      JsonNode actual = expr.apply(context);
+      JsonValue actual = expr.apply(context);
       fail("JSLT did not detect error in " + query);
     } catch (JsltException e) {
       assertTrue("incorrect error message: '" + e.getMessage() + "', " +

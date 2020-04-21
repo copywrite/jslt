@@ -44,7 +44,7 @@ public class ArraySlicer extends AbstractNode {
   public JsonValue apply(Scope scope, JsonValue input) {
     JsonValue sequence = parent.apply(scope, input);
     if (!sequence.isArray() && !sequence.isString())
-      return JsonNull.instance;
+      return JsonNull.NULL;
 
     int size = sequence.size();
     if (sequence.isString())
@@ -55,7 +55,7 @@ public class ArraySlicer extends AbstractNode {
       if (sequence.isArray()) {
         JsonValue val = sequence.get(leftix);
         if (val == null)
-          val = JsonNull.instance;
+          val = JsonNull.NULL;
         return val;
       } else {
         String string = sequence.stringValue();

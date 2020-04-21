@@ -50,8 +50,9 @@ public abstract class JsonValue {
     public JsonValue get(int index) { return null; }
 
     // Questionable. Should we require casting to subclass to get access?
-    public int intValue() { return (int)longValue(); }
-    public long longValue() { return (long)doubleValue(); }
+    // We definitely shouldn't allow narrowing conversions without thorough checking.
+    public int intValue() { return 0; }
+    public long longValue() { return 0; }
     public double doubleValue() { return 0; }
 
     public boolean booleanValue() { return false; }
@@ -71,6 +72,28 @@ public abstract class JsonValue {
         return Collections.emptyIterator();
     }
 
-    // Needs to be implemented in a proper way. Used by NodeUtils.toString().
-    public String toString() { throw new UnsupportedOperationException(); }
+    @Override
+    abstract public String toString();
+
+    @Override
+    abstract public boolean equals(Object o);
+
+    @Override
+    abstract public int hashCode();
+
+    // FIXME: This is only used in one test. Get rid of it.
+    public Iterator<String> fieldNames() {
+        final Iterator<Map.Entry<String, JsonValue>> fields = this.fields();
+        return new Iterator<String>() {
+            @Override
+            public boolean hasNext() {
+                return fields.hasNext();
+            }
+
+            @Override
+            public String next() {
+                return fields.next().getKey();
+            }
+        };
+    }
 }

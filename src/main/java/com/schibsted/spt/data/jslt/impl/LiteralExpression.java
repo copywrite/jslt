@@ -39,6 +39,7 @@ public class LiteralExpression extends AbstractNode {
   }
 
   public String toString() {
+    //TODO: Maybe we should just use value.toString()?
     try {
       return JsonUtils.toJson(value);
     } catch (IOException e) {

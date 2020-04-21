@@ -47,7 +47,7 @@ public class DotExpression extends AbstractNode {
     // okay, do the keying
     JsonValue value = input.get(key);
     if (value == null)
-      value = JsonNull.instance;
+      value = JsonNull.NULL;
     return value;
   }
 

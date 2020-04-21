@@ -29,7 +29,7 @@ public abstract class NumericOperator extends AbstractOperator {
 
   public JsonValue perform(JsonValue v1, JsonValue v2) {
     if (v1.isNull() || v2.isNull())
-      return JsonNull.instance;
+      return JsonNull.NULL;
 
     v1 = NodeUtils.number(v1, true, location);
     v2 = NodeUtils.number(v2, true, location);

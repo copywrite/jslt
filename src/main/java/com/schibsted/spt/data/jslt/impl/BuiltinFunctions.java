@@ -142,7 +142,7 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       JsonValue number = arguments[0];
       if (number.isNull())
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else if (!number.isNumber())
         throw new JsltException("round() cannot round a non-number: " + number);
 
@@ -161,7 +161,7 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       JsonValue number = arguments[0];
       if (number.isNull())
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else if (!number.isNumber())
         throw new JsltException("floor() cannot round a non-number: " + number);
 
@@ -180,7 +180,7 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       JsonValue number = arguments[0];
       if (number.isNull())
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else if (!number.isNumber())
         throw new JsltException("ceiling() cannot round a non-number: " + number);
 
@@ -213,7 +213,7 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       JsonValue array = arguments[0];
       if (array.isNull())
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else if (!array.isArray())
         throw new JsltException("sum(): argument must be array, was " + array);
 
@@ -245,13 +245,13 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       JsonValue dividend = arguments[0];
       if (dividend.isNull())
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else if (!dividend.isNumber())
         throw new JsltException("mod(): dividend cannot be a non-number: " + dividend);
 
       JsonValue divisor = arguments[1];
       if (divisor.isNull())
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else if (!divisor.isNumber())
         throw new JsltException("mod(): divisor cannot be a non-number: " + divisor);
 
@@ -522,7 +522,7 @@ public class BuiltinFunctions {
         if (NodeUtils.isValue(value))
           return value;
       }
-      return JsonNull.instance;
+      return JsonNull.NULL;
     }
   }
 
@@ -550,20 +550,20 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String key = NodeUtils.toString(arguments[1], true);
       if (key == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
 
       JsonValue obj = arguments[0];
       if (obj.isObject()) {
         JsonValue value = obj.get(key);
         if (value == null) {
           if (arguments.length == 2)
-            return JsonNull.instance;
+            return JsonNull.NULL;
           else
             return arguments[2]; // fallback argument
         } else
           return value;
       } else if (obj.isNull())
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else
         throw new JsltException("get-key: can't look up keys in " + obj);
     }
@@ -723,12 +723,12 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String json = NodeUtils.toString(arguments[0], true);
       if (json == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
 
       try {
         JsonValue parsed = JsonUtils.fromJson(json);
         if (parsed == null) // if input is "", for example
-          return JsonNull.instance;
+          return JsonNull.NULL;
         return parsed;
       } catch (Exception e) {
         if (arguments.length == 2)
@@ -768,7 +768,7 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String string = NodeUtils.toString(arguments[0], true);
       if (string == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
 
       String regexp = NodeUtils.toString(arguments[1], false);
       String sep = NodeUtils.toString(arguments[2], false);
@@ -817,7 +817,7 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String string = NodeUtils.toString(arguments[0], true);
       if (string == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
 
       return new JsonString(string.trim());
     }
@@ -834,7 +834,7 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       JsonArray array = NodeUtils.toArray(arguments[0], true);
       if (array == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
 
       String sep = NodeUtils.toString(arguments[1], false);
 
@@ -1017,7 +1017,7 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String text = NodeUtils.toString(arguments[0], true);
       if (text == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
 
       String formatstr = NodeUtils.toString(arguments[1], false);
       JsonValue fallback = null;
@@ -1060,7 +1060,7 @@ public class BuiltinFunctions {
     public JsonValue call(JsonValue input, JsonValue[] arguments) {
       JsonValue number = NodeUtils.number(arguments[0], null);
       if (number == null || number.isNull())
-        return JsonNull.instance;
+        return JsonNull.NULL;
 
       double timestamp = JsonUtils.asDouble(number);
 

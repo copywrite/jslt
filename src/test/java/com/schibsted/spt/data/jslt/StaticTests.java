@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.io.IOException;
 import java.io.StringReader;
 
+import com.schibsted.spt.data.jslt.json.*;
 import org.junit.Test;
 import org.junit.Ignore;
 import static org.junit.Assert.assertTrue;
@@ -36,7 +37,7 @@ public class StaticTests extends TestBase {
   public void testExceptionWithNoLocation() {
     try {
       Expression expr = Parser.compileString("contains(2, 2)");
-      JsonNode actual = expr.apply(null);
+      JsonValue actual = expr.apply(null);
     } catch (JsltException e) {
       assertTrue(e.getSource() == null);
       assertEquals(-1, e.getLine());
@@ -47,7 +48,7 @@ public class StaticTests extends TestBase {
   @Test
   public void testObjectKeyOrder() {
     Expression expr = Parser.compileString("{\"a\":1, \"b\":2}");
-    JsonNode actual = expr.apply(null);
+    JsonValue actual = expr.apply(null);
 
     Iterator<String> it = actual.fieldNames();
     assertEquals("a", it.next());
@@ -57,12 +58,12 @@ public class StaticTests extends TestBase {
   @Test
   public void testRandomFunction() {
     try {
-      JsonNode context = mapper.readTree("{}");
+      JsonValue context = JsonUtils.fromJson("{}");
 
       Expression expr = Parser.compileString("random()");
 
       for (int ix = 0; ix < 10; ix++) {
-        JsonNode actual = expr.apply(context);
+        JsonValue actual = expr.apply(context);
         assertTrue(actual.isNumber());
         double value = actual.doubleValue();
         assertTrue(value > 0.0 && value < 1.0);
@@ -98,17 +99,19 @@ public class StaticTests extends TestBase {
 
   @Test
   public void testNowFunction() {
-    JsonNode now1 = execute("{}", "now()");
+    JsonValue now1 = execute("{}", "now()");
     double now2 = System.currentTimeMillis();
     long delta = 1000; // milliseconds of wriggle-room
 
-    assertTrue(now1.isDouble());
+    assertTrue(now1.isNumber());
     assertTrue("now1 (" + now1 + ") << now2 (" + now2 + ")",
-               (now1.asDouble() * 1000) < (now2 + delta));
+               (now1.doubleValue() * 1000) < (now2 + delta));
     assertTrue("now1 (" + now1 + ") >> now2 (" + now2 + ")",
-               (now1.asDouble() * 1000) > (now2 - delta));
+               (now1.doubleValue() * 1000) > (now2 - delta));
   }
 
+  /*
+   FIXME: These two don't make much sense anymore.
   @Test
   public void testIsDecimalFunction() {
     // check that is-decimal still works even if input
@@ -134,6 +137,7 @@ public class StaticTests extends TestBase {
     assertTrue(actual.isBoolean());
     assertTrue(actual.booleanValue());
   }
+   */
 
   @Test @Ignore // this takes a while to run, so we don't usually do it
   public void testRegexpCache() {
@@ -143,7 +147,7 @@ public class StaticTests extends TestBase {
 
     for (int ix = 0; ix < 10000000; ix++) {
       String r = generateRegexp();
-      JsonNode regexp = new TextNode(r);
+      JsonValue regexp = new JsonString(r);
       expr.apply(regexp);
     }
   }
@@ -204,8 +208,8 @@ public class StaticTests extends TestBase {
       .withNamedModules(modules)
       .compile();
 
-    JsonNode result = expr.apply(null);
-    assertEquals(new IntNode(42), result);
+    JsonValue result = expr.apply(null);
+    assertEquals(new JsonInt(42), result);
   }
 
   @Test
@@ -220,11 +224,11 @@ public class StaticTests extends TestBase {
       .withObjectFilter(filter)
       .compile();
 
-    JsonNode desired = mapper.readTree(
+    JsonValue desired = JsonUtils.fromJson(
       "{ \"bar\" : \"\" }"
     );
 
-    JsonNode result = expr.apply(null);
+    JsonValue result = expr.apply(null);
     assertEquals(desired, result);
   }
 
@@ -240,11 +244,11 @@ public class StaticTests extends TestBase {
       .withObjectFilter(filter)
       .compile();
 
-    JsonNode desired = mapper.readTree(
+    JsonValue desired = JsonUtils.fromJson(
       "{ \"foo\" : null }"
     );
 
-    JsonNode result = expr.apply(null);
+    JsonValue result = expr.apply(null);
     assertEquals(desired, result);
   }
 
@@ -260,15 +264,15 @@ public class StaticTests extends TestBase {
       .withObjectFilter(filter)
       .compile();
 
-    JsonNode input = mapper.readTree(
-      "{ \"foo\" : null, \"bar\" : \"\" }"
+    JsonValue input = JsonUtils.fromJson(
+            "{ \"foo\" : null, \"bar\" : \"\" }"
     );
 
-    JsonNode desired = mapper.readTree(
-      "{ \"foo\" : null }"
+    JsonValue desired = JsonUtils.fromJson(
+            "{ \"foo\" : null }"
     );
 
-    JsonNode result = expr.apply(input);
+    JsonValue result = expr.apply(input);
     assertEquals(desired, result);
   }
 
@@ -281,22 +285,22 @@ public class StaticTests extends TestBase {
       .withObjectFilter(new TrueJsonFilter())
       .compile();
 
-    JsonNode input = mapper.readTree(
+    JsonValue input = JsonUtils.fromJson(
       "{ \"foo\" : null, \"bar\" : \"\" }"
     );
 
-    JsonNode desired = mapper.readTree(
+    JsonValue desired = JsonUtils.fromJson(
       "{ \"foo\" : null, \"bar\" : \"\" }"
     );
 
-    JsonNode result = expr.apply(input);
+    JsonValue result = expr.apply(input);
     assertEquals(desired, result);
   }
 
   @Test
   public void testTrailingCommasInObject() {
     Expression expr = Parser.compileString("{\"a\":1, \"b\":2,}");
-    JsonNode actual = expr.apply(null);
+    JsonValue actual = expr.apply(null);
 
     Iterator<String> it = actual.fieldNames();
     assertEquals("a", it.next());
@@ -306,12 +310,12 @@ public class StaticTests extends TestBase {
   @Test
   public void testTrailingCommasInArray() {
     Expression expr = Parser.compileString("[1,2,]");
-    ArrayNode actual = (ArrayNode) expr.apply(null);
+    JsonArray actual = (JsonArray) expr.apply(null);
 
     assertEquals(2, actual.size());
 
-    assertEquals(1, actual.get(0).asInt());
-    assertEquals(2, actual.get(1).asInt());
+    assertEquals(1, actual.get(0).intValue());
+    assertEquals(2, actual.get(1).intValue());
   }
 
 }

@@ -55,7 +55,7 @@ public class FunctionExpression extends AbstractInvocationExpression {
       // turn it into a JSON null. (the alternative is to throw an
       // exception.)
       if (value == null)
-        value = JsonNull.instance;
+        value = JsonNull.NULL;
 
       return value;
     }

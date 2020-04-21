@@ -1,5 +1,7 @@
 package com.schibsted.spt.data.jslt.json;
 
+import com.schibsted.spt.data.jslt.impl.BuiltinFunctions;
+
 /**
  * JSON 'true' or 'false'.
  *
@@ -9,13 +11,43 @@ package com.schibsted.spt.data.jslt.json;
 final public class JsonBoolean extends JsonValue {
 
 
-    private final boolean value_;
+    private final boolean value;
 
     public static final JsonBoolean FALSE = new JsonBoolean(false);
     public static final JsonValue TRUE = new JsonBoolean(true);
 
     private JsonBoolean(boolean value)
     {
-        value_ = value;
+        this.value = value;
     }
+
+    @Override
+    public boolean isBoolean() { return true; }
+
+    @Override
+    public boolean booleanValue() { return value; }
+
+    public static JsonValue valueOf(boolean value) {
+        return value ? TRUE : FALSE;
+    }
+
+    @Override
+    public String toString()
+    {
+        return value ? "true" : "false";
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == this) return true;
+        if (o == null) return false;
+        if (o instanceof JsonBoolean) {
+            return ((JsonBoolean) o).value == value;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() { return Boolean.valueOf(value).hashCode(); }
 }

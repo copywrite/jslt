@@ -54,7 +54,7 @@ public class IfExpression extends AbstractNode {
       NodeUtils.evalLets(scope, input, elselets);
       return orelse.apply(scope, input);
     } else
-      return JsonNull.instance;
+      return JsonNull.NULL;
   }
 
   public void computeMatchContexts(DotExpression parent) {

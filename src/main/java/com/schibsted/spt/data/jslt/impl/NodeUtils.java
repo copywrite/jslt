@@ -76,6 +76,7 @@ public class NodeUtils {
       return null;
 
     // not sure how well this works in practice, but let's try
+    // FIXME: This is probably not going to work ok.
     return value.toString();
   }
 
@@ -113,7 +114,7 @@ public class NodeUtils {
       if (strict)
         throw new JsltException("Can't convert " + value + " to number", loc);
       else if (fallback == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else
         return fallback;
     }

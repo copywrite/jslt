@@ -15,5 +15,8 @@ package com.schibsted.spt.data.jslt.json;
  * - When sums of money are represented, binary fractions are undesirable.
  *   Any computations on sums of money are expected to be done with decimal fractions.
  */
-public class JsonNumber extends JsonValue {
+public abstract class JsonNumber extends JsonValue {
+
+    @Override
+    public boolean isNumber() { return true; }
 }

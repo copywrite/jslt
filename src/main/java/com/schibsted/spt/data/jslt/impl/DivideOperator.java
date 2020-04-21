@@ -30,7 +30,7 @@ public class DivideOperator extends NumericOperator {
 
   public JsonValue perform(JsonValue v1, JsonValue v2) {
     if (v1.isNull() || v2.isNull())
-      return JsonNull.instance;
+      return JsonNull.NULL;
 
     // we only support the numeric operation and nothing else
     v1 = NodeUtils.number(v1, true, location);

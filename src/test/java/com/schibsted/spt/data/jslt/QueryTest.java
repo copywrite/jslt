@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Collection;
 
+import com.schibsted.spt.data.jslt.json.JsonUtils;
+import com.schibsted.spt.data.jslt.json.JsonValue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -29,10 +31,10 @@ public class QueryTest extends TestBase {
   private String input;
   private String query;
   private String output;
-  private Map<String, JsonNode> variables;
+  private Map<String, JsonValue> variables;
 
   public QueryTest(String input, String query, String output,
-                   Map<String, JsonNode> variables) {
+                   Map<String, JsonValue> variables) {
     this.input = input;
     this.query = query;
     this.output = output;
@@ -42,17 +44,17 @@ public class QueryTest extends TestBase {
   @Test
   public void check() {
     try {
-      JsonNode context = mapper.readTree(input);
+      JsonValue context = JsonUtils.fromJson(input);
 
       Expression expr = Parser.compileString(query);
-      JsonNode actual = expr.apply(variables, context);
+      JsonValue actual = expr.apply(variables, context);
       if (actual == null)
         throw new JsltException("Returned Java null");
 
       // reparse to handle IntNode(2) != LongNode(2)
-      actual = mapper.readTree(mapper.writeValueAsString(actual));
+      actual = JsonUtils.fromJson(JsonUtils.toJson(actual));
 
-      JsonNode expected = mapper.readTree(output);
+      JsonValue expected = JsonUtils.fromJson(output);
 
       assertEquals("" + expected + " != " + actual + " in query " + query + ", actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
     } catch (Exception e) {

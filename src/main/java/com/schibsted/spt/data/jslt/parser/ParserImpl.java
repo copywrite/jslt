@@ -22,22 +22,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.io.File;
 import java.io.Reader;
-import java.io.FileReader;
-import java.io.StringReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.FileNotFoundException;
+
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.impl.*;
-import com.schibsted.spt.data.jslt.filters.JsonFilter;
 import com.schibsted.spt.data.jslt.json.*;
 
 public class ParserImpl {
@@ -222,7 +215,7 @@ public class ParserImpl {
     int kind = token.kind;
 
     if (kind == JsltParserConstants.NULL)
-      return new LiteralExpression(JsonNull.instance, loc);
+      return new LiteralExpression(JsonNull.NULL, loc);
 
     else if (kind == JsltParserConstants.INTEGER) {
       JsonValue numberObj;

@@ -5,9 +5,38 @@ package com.schibsted.spt.data.jslt.json;
  */
 public class JsonDouble extends JsonNumber {
 
-    private double value_;
+    private double value;
 
     public JsonDouble(double value) {
-        value_ = value;
+        this.value = value;
     }
+
+    @Override
+    public String toString() { return "" + value; }
+
+    @Override
+    public double doubleValue() { return (double) value; }
+
+    @Override
+    public long longValue() { return (long) value; }
+
+    @Override
+    public int intValue() { return (int) value; }
+
+    @Override
+    public boolean isFloatingPointNumber() { return true; }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == this) return true;
+        if (o == null) return false;
+        if (o instanceof JsonDouble) {
+            return ((JsonDouble) o).value == value;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() { return Double.valueOf(value).hashCode(); }
 }

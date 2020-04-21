@@ -61,7 +61,7 @@ public class ExperimentalModule implements Module {
       // first find the array that we iterate over
       JsonValue array = parameters[0].apply(scope, input);
       if (array.isNull())
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else if (array.isObject())
         array = NodeUtils.convertObjectToArray(array);
       else if (!array.isArray())

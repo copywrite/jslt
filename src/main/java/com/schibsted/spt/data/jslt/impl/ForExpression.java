@@ -44,7 +44,7 @@ public class ForExpression extends AbstractNode {
   public JsonValue apply(Scope scope, JsonValue input) {
     JsonValue array = valueExpr.apply(scope, input);
     if (array.isNull())
-      return JsonNull.instance;
+      return JsonNull.NULL;
     else if (array.isObject())
       array = NodeUtils.convertObjectToArray(array);
     else if (!array.isArray())

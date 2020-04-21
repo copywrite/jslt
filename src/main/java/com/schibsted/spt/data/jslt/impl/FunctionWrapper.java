@@ -164,7 +164,7 @@ public class FunctionWrapper implements Function {
   static class StringJsonConverter implements ToJsonConverter {
     public JsonValue convert(Object node) {
       if (node == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else
         return new JsonString((String) node);
     }
@@ -173,7 +173,7 @@ public class FunctionWrapper implements Function {
   static class LongJsonConverter implements ToJsonConverter {
     public JsonValue convert(Object node) {
       if (node == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else
         return new JsonLong((Long) node);
     }
@@ -182,7 +182,7 @@ public class FunctionWrapper implements Function {
   static class IntJsonConverter implements ToJsonConverter {
     public JsonValue convert(Object node) {
       if (node == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else
         return new JsonInt((Integer) node);
     }
@@ -191,7 +191,7 @@ public class FunctionWrapper implements Function {
   static class BooleanJsonConverter implements ToJsonConverter {
     public JsonValue convert(Object node) {
       if (node == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else if ((Boolean) node)
         return JsonBoolean.TRUE;
       else
@@ -202,7 +202,7 @@ public class FunctionWrapper implements Function {
   static class DoubleJsonConverter implements ToJsonConverter {
     public JsonValue convert(Object node) {
       if (node == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else
         return new JsonDouble((Double) node);
     }
@@ -211,7 +211,7 @@ public class FunctionWrapper implements Function {
   static class FloatJsonConverter implements ToJsonConverter {
     public JsonValue convert(Object node) {
       if (node == null)
-        return JsonNull.instance;
+        return JsonNull.NULL;
       else
         return new JsonDouble((Float) node);
     }
