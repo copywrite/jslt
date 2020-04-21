@@ -36,6 +36,7 @@ public class JsonUtils {
 
     // Produce JSON string.
     // Not sure why this should ever throw an exception.
+    // Also, this could just be value.toString().
     public static String toJson(JsonValue value) throws IOException
     {
         return JacksonHelper.toJson(value);
