@@ -12,7 +12,7 @@ public class JsonDouble extends JsonNumber {
     }
 
     @Override
-    public String toString() { return "" + value; }
+    public String toString() { return String.valueOf(value); }
 
     @Override
     public double doubleValue() { return (double) value; }

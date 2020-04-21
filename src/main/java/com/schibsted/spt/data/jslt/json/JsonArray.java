@@ -9,18 +9,26 @@ public class JsonArray extends JsonValue {
 
     private ArrayList<JsonValue> array = new ArrayList<JsonValue>();
 
+    @Override
     public boolean isArray() { return true; }
 
+    @Override
     public int size() { return array.size(); }
 
     public void add(JsonValue value) { array.add(value); }
 
-    public void addAll(JsonArray other) { throw new UnsupportedOperationException(); }
+    public void addAll(JsonArray other) { array.addAll(other.array); }
 
     // Do we need this, or should we only allow add(new JsonString(value))?
     public void add(String value) { add(new JsonString(value)); }
 
-    public JsonValue get(int index) { return array.get(index); }
+    @Override
+    public JsonValue get(int index) {
+        if (index >= 0 && index < array.size())
+            return array.get(index);
+
+        return null;
+    }
 
     @Override
     public String toString()
@@ -29,7 +37,7 @@ public class JsonArray extends JsonValue {
 
         String str=array.get(0).toString();
         for(int i=1;i<array.size();i++) {
-            str+=", "+array.get(i);
+            str+=","+array.get(i);
         }
 
         return "["+str+"]";

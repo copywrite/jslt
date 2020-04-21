@@ -2,6 +2,7 @@ package com.schibsted.spt.data.jslt.json;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,7 +14,8 @@ import java.util.stream.Stream;
  */
 public class JsonObject extends JsonValue /* implements Map<String, JsonValue> */ {
 
-    private Map<String, JsonValue> map = new HashMap<String, JsonValue>();
+    // TODO: Have to use LinkedHashMap to retain key order. Otherwise some tests don't pass.
+    private Map<String, JsonValue> map = new LinkedHashMap<String, JsonValue>();
 
     public boolean isObject() { return true; }
 

@@ -13,8 +13,12 @@ public class JacksonConverter {
 
     public static JsonNode toJackson(JsonValue value) {
         if (value.isString()) return new TextNode(value.stringValue());
+
+        // Numbers are a bit weird.
+        if (value instanceof JsonInt) return new IntNode(value.intValue());
         if (value.isNumber() && value.isIntegralNumber()) return new LongNode(value.longValue());
         if (value.isNumber()) return new DoubleNode(value.doubleValue());
+
         if (value.isBoolean()) return BooleanNode.valueOf(value.booleanValue());
         if (value.isNull()) return NullNode.instance;
 
@@ -75,8 +79,10 @@ public class JacksonConverter {
             case NUMBER:
                 if (node.isFloatingPointNumber())
                     return new JsonDouble(node.doubleValue());
-                else
+                else if (node.isLong())
                     return new JsonLong(node.longValue());
+                else
+                    return new JsonInt(node.intValue());
 
             case STRING:
                 return new JsonString(node.textValue());

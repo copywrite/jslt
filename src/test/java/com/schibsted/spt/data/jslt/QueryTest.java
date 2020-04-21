@@ -10,6 +10,7 @@ import java.util.Collection;
 
 import com.schibsted.spt.data.jslt.json.JsonUtils;
 import com.schibsted.spt.data.jslt.json.JsonValue;
+import com.schibsted.spt.data.jslt.json.jackson.JacksonConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -95,13 +96,13 @@ public class QueryTest extends TestBase {
     return strings;
   }
 
-  private static Map<String, JsonNode> toMap(JsonNode json) {
-    Map<String, JsonNode> variables = new HashMap();
+  private static Map<String, JsonValue> toMap(JsonNode json) {
+    Map<String, JsonValue> variables = new HashMap();
     if (json != null) {
       Iterator<String> it = json.fieldNames();
       while (it.hasNext()) {
         String field = it.next();
-        variables.put(field, json.get(field));
+        variables.put(field, JacksonConverter.fromJackson(json.get(field)));
       }
     }
     return variables;

@@ -11,13 +11,20 @@ public class JsonUtils {
     // JsonNode.asText()
     // This function is only needed once.
     public static String asText(JsonValue value) {
-        throw new UnsupportedOperationException("asText() not implemented!");
+        if (value.isString()) return value.stringValue();
+        if (value.isIntegralNumber()) return String.valueOf(value.longValue());
+        if (value.isFloatingPointNumber()) return String.valueOf(value.doubleValue());
+        if (value.isBoolean()) return value.toString();
+        if (value.isNull()) return value.toString();
+        return "";
     }
 
     // JsonNode.asDouble()
     // This function is only used once and probably not needed even there.
     public static double asDouble(JsonValue value) {
-        throw new UnsupportedOperationException("asDouble not implemented!");
+        if (value.isString()) return Double.valueOf(value.stringValue());
+        if (value.isNumber()) return value.doubleValue();
+        return 0;
     }
 
     // Parse JSON string.
