@@ -2,7 +2,7 @@
  * Package for a minimalistic JSON data structure representation.
  *
  * Design principles:
- * 1. Concrete classes with public constructors.
+ * 1. Concrete classes with public constructors. (Conflicts with 4.)
  *    Pros: Avoid factories. (Not really an issue with immutable types).
  *    Cons: Interfaces would allow different implementations depending on use-cases.
  *
@@ -15,6 +15,16 @@
  * 3. Minimalism
  *    Pros: Simplistic and concise design doesn't require frequent updates and retains backwards compatibility.
  *    Cons: No helper methods in classes. Java doesn't have extension methods.
+ * 
+ * 4. Interfaces or abstract classes.
+ *    This allows multiple different implementation with possibility
+ *    of performance optimizations in certain cases.
+ * 
+ * 5. The JSON library must be usable by itself.
+ *    Otherwise even trivial use cases will often require reverting to another JSON library.
+ *    However, the library doesn't have to compete with others.
+ *    a. Client can construct JSON values. Especially if the values are immutable,
+ *       the client must be able to constuct JSON values. 
  */
 package com.schibsted.spt.data.jslt.json;
 
