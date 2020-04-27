@@ -321,6 +321,21 @@ function. So you can write a boolean expression as:
 .foo.bar > 2 and not(contains(.baz, ["george", "harry"]))
 ```
 
+### Pipe operator `|`
+
+The pipe operator allows to change the meaning of the `.` (see [dot-accessors](#dot-accessors) ).
+The expression at left side of the `|` becomes the context node in the expression at the right hand side.
+
+So if the input is `{"a": {"b":1,"c":2,"d":3}}` the query `.a| [.b, .c, .d]` evaluates to `[1,2,3]`.
+The pipe operator allows to shorten the queries.
+An equivalent query to `.a | [.b, .c, .d]` would be `[.a.b, .a.c, .a.d]`
+which is significantly shorter when the object keys are not just single letters like in these examples.
+
+You can also chain several pipe operators 
+` 1 | [.,.] | {"a": ., "b": .}`
+which would evaluate to 
+`{ "a": [1,1],"b": [1,1]}`
+
 ### String processing
 
 Strings can be concatenated with `+`, and any object can be turned
@@ -473,17 +488,31 @@ JSLT allows you to import JSLT modules from files. These are exactly
 like ordinary JSLT templates, except that the final expression after
 the variable and function declarations is not required.
 
-If the two functions above were saved in a file named `utilities.jstl`
+If the two functions above were saved in a file named `utilities.jslt`
 then we could use them in another transform as follows:
 
 ```
-import "utilities.jstl" as utils
+import "utilities.jslt" as utils
 
 {
   "type" : "object",
   "size" : size(.),
   "keys" : utils:count(.)
 }
+```
+
+There is also another way to use `import` statements. If the file has
+a final expression that is not a function or variable declaration, the
+entire file can be imported and used as a function. If the template
+immediately above this paragraph were stored in `"object.jslt"` we
+could do:
+
+```
+import "object.jslt" as obj
+{
+  // some transforms specific to this template
+} +
+obj(.) // shared transforms
 ```
 
 The `import` statement must appear before any variable or function

@@ -140,7 +140,8 @@ public class Parser {
   }
 
   /**
-   * Create a Parser reading JSLT source from the given Reader.
+   * Create a Parser reading JSLT source from the given Reader. Uses a
+   * {@link ClasspathResourceResolver} for import statements.
    */
   public Parser(Reader reader) {
     this("<unknown>", reader, Collections.EMPTY_SET,

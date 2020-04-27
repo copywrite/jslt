@@ -58,15 +58,42 @@ if (not(is-array(.things)))
   error("'things' is not an array")
 ```
 
-### _fallback(arg1, arg2, ...)_
+### _fallback(arg1, arg2, ...) -> value_
 
-Returns the first argument that evaluates to `true`.
+Returns the first argument that has a value. That is, the first
+argument that is not `null`, `[]`, or `{}`.
 
 Examples:
 
 ```
 fallback(.not_existing_key, .another_not_existing, 1)  => 1
-fallback(null, [], {}, "", false, 0, "value") => "value"
+fallback(null, [], {}, "value")                        => "value"
+```
+
+### _min(arg1, arg2) -> value_
+
+Returns the argument that compares as the smallest. If one argument is
+`null` the result is `null`.
+
+Examples:
+
+```
+min(10, 1)    -> 1
+min("a", "b") -> "a"
+min(10, null) -> null
+```
+
+### _max(arg1, arg2) -> value_
+
+Returns the argument that compares as the largest. If one argument is
+`null` the result is `null`.
+
+Examples:
+
+```
+max(10, 1)    -> 10
+max("a", "b") -> "b"
+max(10, null) -> null
 ```
 
 <!-- NUMERIC ===============================================================-->
@@ -115,23 +142,27 @@ is-decimal("1.0")  => false
 
 ### _number(object, fallback?) -> integer|float_
 
-Converts the argument into a number, if possible. Decimals and floats
-will be returned untouched. Strings are parsed into numbers. `null`
-returns `null`. All other types cause an error, unless `fallback` is
-specified.
+Converts the argument into a number, if possible. Decimals and
+integers will be returned untouched. Strings are parsed into numbers.
+`null` returns `null`. All other types cause an error, unless
+`fallback` is specified.
 
 If `fallback` is specified then if `object` is of the wrong type, or
 if it is a string that cannot be parsed, then the `fallback` value is
 returned.
 
+The number format supported is the same as in JSON literals, except
+that leading zeroes are allowed.
+
 Examples:
 
 ```
-number(23)   => 23
-number("23") => 23
-number(23.0) => 23
-number(null) => null
-number("ab") => error
+number(23)    => 23
+number("23")  => 23
+number("023") => 23
+number(23.0)  => 23.0
+number(null)  => null
+number("ab")  => error
 ```
 
 ### _round(float) -> integer_
@@ -239,6 +270,29 @@ mod(10, 2.1)  => error
 mod(10, "2")  => error
 ```
 
+### _hash-int(object) -> int_
+
+Returns a hash value of the given object. It differs from `sha256-hex` in that
+it gives a numeric integral hash value instead of a string. There is no guarantee that the same
+input will produce the same output in different environments (JVM versions, etc.)
+
+Examples:
+
+```
+hash-int("test") => 3556808
+hash-int("") => 310
+hash-int({}) => 8
+hash-int([]) => 1
+hash-int([1,2]) => 8928
+hash-int([2,1]) => 9858
+hash-int([1,2]) != hash-int([2,1]) => true
+hash-int(1) => 248
+hash-int(null) => 6
+hash-int({"a":1,"b":2}) => 10519540
+hash-int({"b":2,"a":1}) => 10519540
+hash-int({"a":1,"b":2}) == hash-int({"b":2,"a":1}) => true
+```
+
 <!-- STRING =================================================================-->
 
 ## String functions
@@ -281,7 +335,7 @@ Some examples:
 test("123", "\d+")       => Error (\d not a known escape code)
 test("123", "\\d+")      => true
 test("abc123", "\\d+")   => true (matching part is enough)
-test("^abc123$", "\\d+") => false
+test("abc123", "^\\d+$") => false
 ```
 
 ### _capture(input, regexp) -> object_
@@ -322,7 +376,7 @@ Examples:
 
 ```
 split("1,2,3,4,5", ",") => ["1", "2", "3", "4", "5"]
-split("1,2,3,4,5", ";") => "1,2,3,4,5"
+split("1,2,3,4,5", ";") => ["1,2,3,4,5"]
 split(null, ";")        => null
 split(",2", ",")        => ["", "2"]
 split("2,", ",")        => ["2"]
@@ -338,7 +392,7 @@ Examples:
 
 ```
 join(["a", "b", "c"], " ") => "a b c"
-join(["a", " ")            => "a"
+join(["a"], " ")            => "a"
 join(null, "-")            => null
 join([1], "-")             => "1"
 ```
@@ -449,9 +503,9 @@ Examples:
 
 ```
 replace("abc def ghi", " ", "-")      => "abc-def-ghi"
-replace("abc def ghi", "\\S+", "-")   => "abc-def-ghi"
-replace(null, "\\S+", "-")            => null
-replace("   whoah", "^\\S+", "")      => "whoah"
+replace("abc def ghi", "\\s+", "-")   => "abc-def-ghi"
+replace(null, "\\s+", "-")            => null
+replace("   whoah", "^\\s+", "")      => "whoah"
 replace("abc def ghi", "[a-z]", "x")  => "xxx xxx xxx"
 replace("abc def ghi", "[a-z]+", "x") => "x x x"
 ```
@@ -718,4 +772,24 @@ Examples:
 format-time(1529677391, "yyyy-MM-dd'T'HH:mm:ss") => "2018-06-22T14:23:11"
 format-time(0, "yyyy-MM-dd")                     => "1970-01-01"
 format-time(null, "yyyy-MM-dd")                  => null
+```
+<!-- Misc ===================================================================-->
+
+## Miscellaneous functions
+
+### _parse-url(url) -> object_
+
+Parses `url` and returns an object with keys [`scheme`, `userinfo`, `host`, `port` `path`, `query`, `parameters`, `fragment` ]
+
+```
+parse-url("http://example.com").scheme => "http"
+parse-url("http://example.com").host => "example.com"
+parse-url("http://example.com").path => null
+parse-url("http://example.com/").path = "/"
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").query =>  "aa=1&aa=2&bb=&cc"
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.aa =>  ["1", "2"]
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.bb =>  [null]
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.cc =>  [null]
+parse-url("ftp://username:password@host.com/").userinfo => "username:password"
+parse-url("https://example.com:8443").port => 8443
 ```

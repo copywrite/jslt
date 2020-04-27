@@ -67,7 +67,7 @@ To include JSLT in your project, depend on:
 <dependency>
   <groupId>com.schibsted.spt.data</groupId>
   <artifactId>jslt</artifactId>
-  <version>0.1.8</version>
+  <version>0.1.9</version>
 </dependency>
 ```
 
@@ -136,6 +136,8 @@ Anthony Sparks is working on a
 things) some of the ways Schibsted uses JSLT.
 
 [Visual Studio syntax highlighter](https://marketplace.visualstudio.com/items?itemName=jarno-rajala.jslt-lang) for JSLT.
+
+[Apache Camel JSLT component](https://camel.apache.org/components/latest/jslt-component.html).
 
 ## LICENSE
 

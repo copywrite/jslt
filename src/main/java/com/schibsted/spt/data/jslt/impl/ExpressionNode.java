@@ -19,7 +19,7 @@ import com.schibsted.spt.data.jslt.json.JsonValue;
 
 import java.util.List;
 /**
- * Internal interface for the parts of a compiled JSTL 2.0 expression.
+ * Internal interface for the parts of a compiled JSLT expression.
  * Different from the external interface because we want to avoid
  * having convenience methods here, and also because we may want to
  * add methods for introspection (for optimization, generating

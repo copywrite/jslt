@@ -37,6 +37,7 @@ public class JsonObject extends JsonValue /* implements Map<String, JsonValue> *
 
     // Should we have putters for different values?
     public void put(String key, String value) { put(key, new JsonString(value));}
+    public void put(String key, int value) { put(key, new JsonInt(value)); }
 
     public boolean has(String key) {
         return map.containsKey(key);
@@ -44,8 +45,8 @@ public class JsonObject extends JsonValue /* implements Map<String, JsonValue> *
 
     @Override
     public String toString() {
-        Stream<String> body = map.entrySet().stream().map(e -> "\"" + JsonString.escape(e.getKey()) + "\" : " + e.getValue());
-        return "{" + String.join(", ", body.collect(Collectors.toList())) + "}";
+        Stream<String> body = map.entrySet().stream().map(e -> "\"" + JsonString.escape(e.getKey()) + "\":" + e.getValue());
+        return "{" + String.join(",", body.collect(Collectors.toList())) + "}";
     }
 
     @Override

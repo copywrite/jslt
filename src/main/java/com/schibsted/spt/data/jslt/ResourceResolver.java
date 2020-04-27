@@ -19,7 +19,7 @@ import java.io.Reader;
 
 /**
  * Given a string identifying a JSLT module file, return a Reader that
- * produces the module. This interface can be used to look up module
+ * produces the module. This abstract class can be used to look up module
  * files other places than just on the classpath.
  */
 public interface ResourceResolver {

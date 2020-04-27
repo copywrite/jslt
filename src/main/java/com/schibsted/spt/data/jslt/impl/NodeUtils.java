@@ -16,9 +16,15 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Map;
 import java.util.Iterator;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.BigIntegerNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.json.*;
 
@@ -119,14 +125,9 @@ public class NodeUtils {
         return fallback;
     }
 
-    // let's look at this number. There are a ton of number formats,
-    // so just let Jackson handle it.
+    // let's look at this number.
     String number = JsonUtils.asText(value);
-    JsonValue numberNode = null;
-    try {
-        numberNode = JsonUtils.fromJson(number);
-    } catch (IOException e) {}
-
+    JsonValue numberNode = parseNumber(number);
     if (numberNode == null || !numberNode.isNumber()) {
       if (fallback == null)
         throw new JsltException("number(" + number + ") failed: not a number",
@@ -136,6 +137,88 @@ public class NodeUtils {
     } else {
         return numberNode;
     }
+  }
+
+  // returns null in case of failure (caller then handles fallback)
+  private static JsonValue parseNumber(String number) {
+    if (number.length() == 0)
+      return null;
+
+    int pos = 0;
+    if (number.charAt(0) == '-') {
+      pos = 1;
+    }
+
+    int endInteger = scanDigits(number, pos);
+    if (endInteger == pos)
+      return null;
+    if (endInteger == number.length()) {
+      if (number.length() < 10)
+        return new JsonInt(Integer.parseInt(number));
+      else if (number.length() < 19)
+        return new JsonLong(Long.parseLong(number));
+      else
+        throw new UnsupportedOperationException("Long overflow! No BigInt not implemented!");
+        //return new BigIntegerNode(new BigInteger(number));
+    }
+
+    // since there's stuff after the initial integer it must be either
+    // the decimal part or the exponent
+    int intPart = Integer.parseInt(number.substring(0, endInteger));
+    pos = endInteger;
+    double value = intPart;
+
+    if (number.charAt(pos) == '.') {
+      pos += 1;
+      int endDecimal = scanDigits(number, pos);
+      if (endDecimal == pos)
+        return null;
+
+      long decimalPart = Long.parseLong(number.substring(endInteger + 1, endDecimal));
+      int digits = endDecimal - endInteger - 1;
+
+      value = (decimalPart / Math.pow(10, digits)) + intPart;
+      pos = endDecimal;
+
+      // if there's nothing more, then this is it
+      if (pos == number.length())
+        return new JsonDouble(value);
+    }
+
+    // there is more: next character MUST be 'e' or 'E'
+    char ch = number.charAt(pos);
+    if (ch != 'e' && ch != 'E')
+      return null;
+
+    // now we must have either '-', '+', or an integer
+    pos++;
+    if (pos == number.length())
+      return null;
+    ch = number.charAt(pos);
+    int sign = 1;
+    if (ch == '+')
+      pos++;
+    else if (ch == '-') {
+      sign = -1;
+      pos++;
+    }
+
+    int endExponent = scanDigits(number, pos);
+    if (endExponent != number.length() || endExponent == pos)
+      return null;
+
+    int exponent = Integer.parseInt(number.substring(pos)) * sign;
+    return new JsonDouble(value * Math.pow(10, exponent));
+  }
+
+  private static int scanDigits(String number, int pos) {
+    while (pos < number.length() && isDigit(number.charAt(pos)))
+      pos++;
+    return pos;
+  }
+
+  private static boolean isDigit(char ch) {
+    return ch >= '0' && ch <= '9';
   }
 
   public static JsonArray convertObjectToArray(JsonValue object) {

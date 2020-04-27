@@ -57,13 +57,13 @@ public class QueryTest extends TestBase {
 
       JsonValue expected = JsonUtils.fromJson(output);
 
-      assertEquals("" + expected + " != " + actual + " in query " + query + ", actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
+      assertEquals("" + expected + " != " + actual + " in query " + query + ", input: " + input + ", actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
     } catch (Exception e) {
       throw new RuntimeException("Failure on query " + query + ": " + e, e);
     }
   }
 
-  @Parameters
+  @Parameters(name= "query: {1}")
   public static Collection<Object[]> data() {
     List<Object[]> strings = new ArrayList();
     strings.addAll(loadTests("query-tests.json"));

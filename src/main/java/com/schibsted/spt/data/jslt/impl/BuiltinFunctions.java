@@ -15,6 +15,14 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Date;
@@ -28,13 +36,16 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.json.*;
+import com.schibsted.spt.data.jslt.json.jackson.JacksonHelper;
+
 
 /**
  * For now contains all the various function implementations. Should
@@ -51,6 +62,8 @@ public class BuiltinFunctions {
     functions.put("contains", new BuiltinFunctions.Contains());
     functions.put("size", new BuiltinFunctions.Size());
     functions.put("error", new BuiltinFunctions.Error());
+    functions.put("min", new BuiltinFunctions.Min());
+    functions.put("max", new BuiltinFunctions.Max());
 
     // NUMERIC
     functions.put("is-number", new BuiltinFunctions.IsNumber());
@@ -63,6 +76,7 @@ public class BuiltinFunctions {
     functions.put("random", new BuiltinFunctions.Random());
     functions.put("sum", new BuiltinFunctions.Sum());
     functions.put("mod", new BuiltinFunctions.Modulo());
+    functions.put("hash-int", new BuiltinFunctions.HashInt());
 
     // STRING
     functions.put("is-string", new BuiltinFunctions.IsString());
@@ -101,6 +115,9 @@ public class BuiltinFunctions {
     functions.put("now", new BuiltinFunctions.Now());
     functions.put("parse-time", new BuiltinFunctions.ParseTime());
     functions.put("format-time", new BuiltinFunctions.FormatTime());
+
+    // MISC
+    functions.put("parse-url", new BuiltinFunctions.ParseUrl());
   }
 
   public static Map<String, Macro> macros = new HashMap();
@@ -273,6 +290,22 @@ public class BuiltinFunctions {
 
         return new JsonLong(r);
       }
+    }
+  }
+
+  // ===== HASH-INT
+
+  public static class HashInt extends AbstractFunction {
+
+    public HashInt() {
+      super("hash-int", 1, 1);
+    }
+
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue node = arguments[0];
+      if (node.isNull())
+        return JsonNull.NULL;
+      return new JsonInt(JacksonHelper.hashCode(node));
     }
   }
 
@@ -1086,6 +1119,86 @@ public class BuiltinFunctions {
       } catch (IllegalArgumentException e) {
         // thrown if format is bad
         throw new JsltException("format-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
+      }
+    }
+  }
+
+  // ===== MIN
+
+  public static class Min extends AbstractFunction {
+    public Min() {
+      super("min", 2, 2);
+    }
+
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      // this works because null is the smallest of all values
+      if (ComparisonOperator.compare(arguments[0], arguments[1], null) < 0)
+        return arguments[0];
+      else
+        return arguments[1];
+    }
+  }
+
+  // ===== MAX
+
+  public static class Max extends AbstractFunction {
+    public Max() {
+      super("max", 2, 2);
+    }
+
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      if (arguments[0].isNull() || arguments[1].isNull())
+        return JsonNull.NULL;
+      else if (ComparisonOperator.compare(arguments[0], arguments[1], null) > 0)
+        return arguments[0];
+      else
+        return arguments[1];
+    }
+  }
+
+  // ===== PARSE-URL
+
+  public static class ParseUrl extends AbstractFunction {
+    public ParseUrl() { super("parse-url", 1,1);}
+
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      if (arguments[0].isNull())
+        return JsonNull.NULL;
+
+      String urlString = arguments[0].stringValue();
+
+      try {
+        URL aURL = new URL(urlString);
+        final JsonObject objectNode = new JsonObject();
+        if (aURL.getHost() != null && !aURL.getHost().isEmpty())
+          objectNode.put("host", aURL.getHost());
+        if (aURL.getPort() != -1)
+          objectNode.put("port", aURL.getPort());
+        if (!aURL.getPath().isEmpty())
+          objectNode.put("path", aURL.getPath());
+        if (aURL.getProtocol() != null && !aURL.getProtocol().isEmpty())
+          objectNode.put("scheme", aURL.getProtocol());
+        if (aURL.getQuery() != null && !aURL.getQuery().isEmpty()) {
+          objectNode.put("query", aURL.getQuery());
+          final JsonObject queryParamsNode = new JsonObject();
+          objectNode.put("parameters", queryParamsNode);
+          final String[] pairs = aURL.getQuery().split("&");
+          for (String pair : pairs) {
+            final int idx = pair.indexOf("=");
+            final String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
+            if (!queryParamsNode.has(key)) queryParamsNode.put(key, new JsonArray());
+            final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
+            final JsonArray valuesNode = (JsonArray) queryParamsNode.get(key);
+            valuesNode.add(value);
+          }
+        }
+        if(aURL.getRef() != null)
+          objectNode.put("fragment", aURL.getRef());
+        if(aURL.getUserInfo() != null && !aURL.getUserInfo().isEmpty())
+          objectNode.put("userinfo", aURL.getUserInfo());
+        return objectNode;
+      } catch (MalformedURLException | UnsupportedEncodingException e) {
+        throw new JsltException("Can't parse " + urlString, e);
       }
     }
   }
